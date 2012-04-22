@@ -13,44 +13,47 @@ sub base : Chained('/base') : PathPart('sp') : CaptureArgs(0) {
 }
 
 sub sum_redis_keys {
-    my $redis = shift;
-    my $key   = shift;
+    my ($redis, $key) = @_;
     my @all   = $redis->keys($key);
     return 0 unless @all;
-    my $all_total;
+    my $all_total = 0;
     map { $all_total += $_ } $redis->mget(@all);
     return $all_total;
 }
 
 sub year : Chained('base') PathPart('') CaptureArgs(1) {
     my ( $self, $c, $year ) = @_;
+    $c->stash->{year} = $year;
     $c->stash->{redis}->select("sp$year");
     $c->stash->{template} = 'node.tt';
+    $c->stash->{node} = join('/', '', 'sp', $c->stash->{year}, 'data');
 }
 
 sub root : Chained('year') PathPart('') Args(0) {
     my ( $self, $c ) = @_;
-    $c->stash->{node} = '/sp/2011/data';
 }
 
 sub root_funcoes : Chained('year') PathPart('') Args(1) {
     my ( $self, $c, $funcao_id ) = @_;
-    $c->stash->{node} = "/sp/2011/data/$funcao_id";
+    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id);
 }
 
 sub root_subfuncoes : Chained('year') PathPart('') Args(2) {
     my ( $self, $c, $funcao_id, $subfuncao_id ) = @_;
-    $c->stash->{node} = "/sp/2011/data/$funcao_id/$subfuncao_id";
+    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id,
+        $subfuncao_id);
 }
 
 sub root_programas : Chained('year') PathPart('') Args(3) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id ) = @_;
-    $c->stash->{node} = "/sp/2011/data/$funcao_id/$subfuncao_id/$programa_id";
+    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id,
+        $subfuncao_id, $programa_id);
 }
 
 sub root_acoes : Chained('year') PathPart('') Args(4) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id, $acao_id ) = @_;
-    $c->stash->{node} = "/sp/2011/data/$funcao_id/$subfuncao_id/$programa_id/$acao_id";
+    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id,
+        $subfuncao_id, $programa_id, $acao_id);
 }
 
 sub credor : Chained('year') PathPart('') Args(5) {
@@ -103,7 +106,13 @@ sub data : Chained('year') Args(0) {
     foreach my $funcao (@funcoes) {
         my ( $foo, $id ) = split( '_', $funcao );
         my $name = $redis->get($funcao);
-        my $total = &sum_redis_keys( $redis, "$id\_*" );
+
+        my $total = $redis->get("CACHE_FUNCAO_SUM_$funcao");
+        if (!$total) {
+            $total = &sum_redis_keys( $redis, "$id\_*" );
+            $redis->set("CACHE_FUNCAO_SUM_$funcao", $total);
+        }
+
         push( @data, { id => $id, display => $name, link => "/$id", total => $total } );
     }
     $c->stash->{data} = \@data;
