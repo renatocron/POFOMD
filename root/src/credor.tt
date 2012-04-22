@@ -1,0 +1,18 @@
+
+<h1>Credor</h1>
+
+<h2>[% credor_nome %]</h2>
+
+<br/><br/>
+
+[% FOREACH item IN links %]
+<p>
+<b>Função:</b> <a href="[% item.funcao_url %]">[% item.funcao %]</a></br>
+<b>Sub-função:</b> <a href="[% item.subfuncao_url %]">[% item.subfuncao %]</a></br>
+<b>Programa:</b> <a href="[% item.programa_url %]">[% item.programa %]</a></br>
+<b>Ação:</b> <a href="[% item.acao_url %]">[% item.acao %]</a></br>
+<b>Valor:</b> R$ [% item.valor %]</br>
+</p>
+[% END %]
+
+<b>Total: R$ [% total %]</b></br>

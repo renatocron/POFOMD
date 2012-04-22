@@ -53,6 +53,48 @@ sub root_acoes : Chained('year') PathPart('') Args(4) {
     $c->stash->{node} = "/sp/2011/data/$funcao_id/$subfuncao_id/$programa_id/$acao_id";
 }
 
+sub credor : Chained('year') PathPart('') Args(5) {
+    my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id, $acao_id, $credor_id ) = @_;
+    my $redis = $c->stash->{redis};
+    $c->stash->{template} = 'credor.tt';
+
+    $c->stash->{credor_nome} = $redis->get("CREDOR_$credor_id");
+
+    my @ocorrencias = $redis->keys("*_*_*_*_$credor_id");
+    my @links;
+
+    my $total = 0;
+    foreach my $ocorrencia (@ocorrencias) {
+        my ( $l_funcao_id, $l_subfuncao_id, $l_programa_id, $l_acao_id, $l_credor_id ) = split( '_', $ocorrencia );
+        my $ocorrencia_valor = $redis->get($ocorrencia);
+
+        push(
+            @links,
+            {   funcao     => $redis->get("FUNCAO_$l_funcao_id"),
+                funcao_url => join( '/', '', 'sp', '2011', $l_funcao_id ),
+
+                subfuncao     => $redis->get("SUBFUNCAO_$l_subfuncao_id"),
+                subfuncao_url => join( '/', '', 'sp', '2011', $l_funcao_id, $l_subfuncao_id ),
+
+                programa     => $redis->get("PROGRAMA_$l_programa_id"),
+                programa_url => join( '/', '', 'sp', '2011', $l_funcao_id, $l_subfuncao_id, $l_programa_id ),
+
+                acao => $redis->get("ACAO_$l_acao_id"),
+                acao_url =>
+                    join( '/', '', 'sp', '2011', $l_funcao_id, $l_subfuncao_id, $l_programa_id, $l_acao_id ),
+
+                valor => formata_real( $ocorrencia_valor, 2 ),
+
+            }
+        );
+
+        $total += $ocorrencia_valor;
+    }
+
+    $c->stash->{total} = formata_real( $total, 2 );
+    $c->stash->{links} = [@links];
+}
+
 sub data : Chained('year') Args(0) {
     my ( $self, $c ) = @_;
     my $redis   = $c->stash->{redis};
@@ -99,7 +141,7 @@ sub data_funcao : PathPart('data') : Chained('year') : Args(1) {
 sub data_subfuncao : PathPart('data') : Chained('year') : Args(2) {
     my ( $self, $c, $target_funcao, $target_subfuncao ) = @_;
 
-    my $redis      = $c->stash->{redis};
+    my $redis     = $c->stash->{redis};
     my @programas = $redis->keys("$target_funcao\_$target_subfuncao\_*");
     my @our_programas;
     my @data;
@@ -109,8 +151,7 @@ sub data_subfuncao : PathPart('data') : Chained('year') : Args(2) {
         next if grep( /^$programa_id$/, @our_programas );
         push( @our_programas, $programa_id );
         my $name = $redis->get("PROGRAMA_$programa_id");
-        my $total = &sum_redis_keys( $redis,
-            "$target_funcao\_$subfuncao_id\_$programa_id\_*" );
+        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_$programa_id\_*" );
         push(
             @data,
             {   id      => $programa_id,
@@ -128,19 +169,17 @@ sub data_subfuncao : PathPart('data') : Chained('year') : Args(2) {
 sub data_programas : PathPart('data') : Chained('year') : Args(3) {
     my ( $self, $c, $target_funcao, $target_subfuncao, $target_programa ) = @_;
 
-    my $redis      = $c->stash->{redis};
-    my @acoes =     $redis->keys("$target_funcao\_$target_subfuncao\_$target_programa\_*");
+    my $redis = $c->stash->{redis};
+    my @acoes = $redis->keys("$target_funcao\_$target_subfuncao\_$target_programa\_*");
     my @our_acoes;
     my @data;
 
     foreach my $acao (@acoes) {
-        my ( $funcao_id, $subfuncao_id, $programa_id, $acao_id ) = split( '_',
-            $acao );
+        my ( $funcao_id, $subfuncao_id, $programa_id, $acao_id ) = split( '_', $acao );
         next if grep( /^$acao_id$/, @our_acoes );
         push( @our_acoes, $acao_id );
         my $name = $redis->get("ACAO_$acao_id");
-        my $total = &sum_redis_keys( $redis,
-            "$target_funcao\_$subfuncao_id\_$programa_id\_$acao_id\_*" );
+        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_$programa_id\_$acao_id\_*" );
         push(
             @data,
             {   id      => $acao_id,
@@ -156,29 +195,24 @@ sub data_programas : PathPart('data') : Chained('year') : Args(3) {
 }
 
 sub data_acoes : PathPart('data') : Chained('year') : Args(4) {
-    my ( $self, $c, $target_funcao, $target_subfuncao, $target_programa,
-        $target_acao ) = @_;
+    my ( $self, $c, $target_funcao, $target_subfuncao, $target_programa, $target_acao ) = @_;
 
-    my $redis      = $c->stash->{redis};
-    my @credores =
-    $redis->keys("$target_funcao\_$target_subfuncao\_$target_programa\_$target_acao\_*");
+    my $redis    = $c->stash->{redis};
+    my @credores = $redis->keys("$target_funcao\_$target_subfuncao\_$target_programa\_$target_acao\_*");
     my @our_credores;
     my @data;
 
     foreach my $credor (@credores) {
-        my ( $funcao_id, $subfuncao_id, $programa_id, $acao_id, $credor_id ) = split( '_',
-            $credor );
+        my ( $funcao_id, $subfuncao_id, $programa_id, $acao_id, $credor_id ) = split( '_', $credor );
         next if grep( /^$credor_id$/, @our_credores );
         push( @our_credores, $credor_id );
         my $name = $redis->get("CREDOR_$credor_id");
-        my $total = &sum_redis_keys( $redis,
-            "$target_funcao\_$subfuncao_id\_$programa_id\_$acao_id\_$credor_id" );
+        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_$programa_id\_$acao_id\_$credor_id" );
         push(
             @data,
             {   id      => $credor_id,
                 display => $name,
-                link    =>
-                "/$funcao_id/$subfuncao_id/$programa_id/$acao_id/$credor_id",
+                link    => "/$funcao_id/$subfuncao_id/$programa_id/$acao_id/$credor_id",
                 total   => $total
             }
         );
@@ -187,9 +221,6 @@ sub data_acoes : PathPart('data') : Chained('year') : Args(4) {
     $c->stash->{data} = \@data;
     $c->forward('handle_TREE');
 }
-
-
-
 
 sub handle_TREE : Private {
     my ( $self, $c ) = @_;
