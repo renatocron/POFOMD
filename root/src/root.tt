@@ -1,0 +1,8 @@
+[% META root=1 %]
+
+<p>Escolha abaixo a base que deseja visualizar os dados, e logo depois o periodo.</p>
+
+[% INCLUDE box.tt %]
+
+Nós ajude a construir este site! Entre em <a href="/contato">contato</a> conosco!
+ 
