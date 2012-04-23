@@ -183,7 +183,7 @@ sub handle_DATA : Private {
             @data,
             {   id      => $target_id,
                 display => $name,
-                link    => join( '/', '', @targets[ 0 .. $c->stash->{target_type} ] ),
+                link    => join( '/',  @targets[ 0 .. $c->stash->{target_type} ] ),
                 total   => $total
             }
         );
