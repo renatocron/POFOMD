@@ -111,7 +111,7 @@ sub data : Chained('year') Args(0) {
             $redis->set( "CACHE_FUNCAO_SUM_$funcao", $total );
         }
 
-        push( @data, { id => $id, display => $name, link => "/$id", total => $total } );
+        push( @data, { id => $id, display => $name, link => "$id", total => $total } );
     }
     $c->stash->{data} = \@data;
     $c->forward('handle_TREE');
