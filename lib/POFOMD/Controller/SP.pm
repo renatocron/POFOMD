@@ -211,7 +211,8 @@ sub handle_TREE : Private {
         my $valor_print       = formata_valor( $item->{total} );
         my $porcentagem       = formata_float( $valor_porcentagem, 3 );
         my $zone              = '/';
-        my $link              = '/sp/2011' . $item->{link};
+        my $link              = join('/', '', 'sp', $c->stash->{year},
+            $item->{link});
 
         my $title = $item->{display};
 
