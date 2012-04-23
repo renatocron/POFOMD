@@ -1,9 +1,13 @@
 #!/usr/bin/perl
 
-# http://www.fazenda.sp.gov.br/download/default.shtm
-
 use strict;
 use warnings;
+
+if (scalar(@ARGV) != 2) {
+    print "Use $0 [year] [dataset.csv]\n";
+    exit;
+}
+
 
 use Redis;
 use Text::CSV_XS;
@@ -23,7 +27,8 @@ my ($ANO_DE_REFERENCIA,           $CODIGO_ORGAO,                $NOME_ORGAO,
 );
 
 my $redis = new Redis;
-$redis->select('sp2011');
+my $year = $ARGV[0];
+$redis->select("sp$year");
 my $csv = Text::CSV_XS->new( { binary => 1 } );
 
 $csv->bind_columns(
@@ -42,14 +47,16 @@ $csv->bind_columns(
     \$VALOR_PAGO,                  \$VALOR_PAGO_DE_ANOS_ANTERIORES
 );
 
-open my $fh, $ARGV[0] or die 'error';
+open my $fh, $ARGV[1] or die 'error';
 
-$redis->flushall;
-print "start..\n";
+$redis->flushdb;
 
+my $line = 0;
+print "loop..\n";
+while(1) {
 while ( my $row = $csv->getline($fh) ) {
+    $line++;
     next if $CODIGO_FUNCAO eq 'CODIGO FUNCAO' or !$VALOR_PAGO;
-
     my $key = join('_', $CODIGO_FUNCAO, $CODIGO_SUBFUNCAO, $CODIGO_PROGRAMA,
         $CODIGO_ACAO, $CODIGO_CREDOR);
 
@@ -84,10 +91,9 @@ while ( my $row = $csv->getline($fh) ) {
 
 }
 my  ($cde, $str, $pos) = $csv->error_diag ();
-print "$cde\n";
-print "$str\n";
-print "$pos\n";
-
-#$csv->eof or $csv->error_diag();
+print "line $line with syntax error\n";
+last if $cde == 0;
+}
+print "done\n";
 close $fh;
 

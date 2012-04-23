@@ -13,8 +13,8 @@ sub base : Chained('/base') : PathPart('sp') : CaptureArgs(0) {
 }
 
 sub sum_redis_keys {
-    my ($redis, $key) = @_;
-    my @all   = $redis->keys($key);
+    my ( $redis, $key ) = @_;
+    my @all = $redis->keys($key);
     return 0 unless @all;
     my $all_total = 0;
     map { $all_total += $_ } $redis->mget(@all);
@@ -26,7 +26,7 @@ sub year : Chained('base') PathPart('') CaptureArgs(1) {
     $c->stash->{year} = $year;
     $c->stash->{redis}->select("sp$year");
     $c->stash->{template} = 'node.tt';
-    $c->stash->{node} = join('/', '', 'sp', $c->stash->{year}, 'data');
+    $c->stash->{node} = join( '/', '', 'sp', $c->stash->{year}, 'data' );
 }
 
 sub root : Chained('year') PathPart('') Args(0) {
@@ -35,30 +35,28 @@ sub root : Chained('year') PathPart('') Args(0) {
 
 sub root_funcoes : Chained('year') PathPart('') Args(1) {
     my ( $self, $c, $funcao_id ) = @_;
-    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id);
+    $c->stash->{node} = join( '/', $c->stash->{node}, $funcao_id );
 }
 
 sub root_subfuncoes : Chained('year') PathPart('') Args(2) {
     my ( $self, $c, $funcao_id, $subfuncao_id ) = @_;
-    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id,
-        $subfuncao_id);
+    $c->stash->{node} = join( '/', $c->stash->{node}, $funcao_id, $subfuncao_id );
 }
 
 sub root_programas : Chained('year') PathPart('') Args(3) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id ) = @_;
-    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id,
-        $subfuncao_id, $programa_id);
+    $c->stash->{node} = join( '/', $c->stash->{node}, $funcao_id, $subfuncao_id, $programa_id );
 }
 
 sub root_acoes : Chained('year') PathPart('') Args(4) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id, $acao_id ) = @_;
-    $c->stash->{node} = join('/', $c->stash->{node}, $funcao_id,
-        $subfuncao_id, $programa_id, $acao_id);
+    $c->stash->{node} = join( '/', $c->stash->{node}, $funcao_id, $subfuncao_id, $programa_id, $acao_id );
 }
 
 sub credor : Chained('year') PathPart('') Args(5) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id, $acao_id, $credor_id ) = @_;
     my $redis = $c->stash->{redis};
+    my $year = $c->stash->{year};
     $c->stash->{template} = 'credor.tt';
 
     $c->stash->{credor_nome} = $redis->get("CREDOR_$credor_id");
@@ -74,17 +72,17 @@ sub credor : Chained('year') PathPart('') Args(5) {
         push(
             @links,
             {   funcao     => $redis->get("FUNCAO_$l_funcao_id"),
-                funcao_url => join( '/', '', 'sp', '2011', $l_funcao_id ),
+                funcao_url => join( '/', '', 'sp', $year, $l_funcao_id ),
 
                 subfuncao     => $redis->get("SUBFUNCAO_$l_subfuncao_id"),
-                subfuncao_url => join( '/', '', 'sp', '2011', $l_funcao_id, $l_subfuncao_id ),
+                subfuncao_url => join( '/', '', 'sp', $year, $l_funcao_id, $l_subfuncao_id ),
 
                 programa     => $redis->get("PROGRAMA_$l_programa_id"),
-                programa_url => join( '/', '', 'sp', '2011', $l_funcao_id, $l_subfuncao_id, $l_programa_id ),
+                programa_url => join( '/', '', 'sp', $year, $l_funcao_id, $l_subfuncao_id, $l_programa_id ),
 
                 acao => $redis->get("ACAO_$l_acao_id"),
                 acao_url =>
-                    join( '/', '', 'sp', '2011', $l_funcao_id, $l_subfuncao_id, $l_programa_id, $l_acao_id ),
+                    join( '/', '', 'sp', $year, $l_funcao_id, $l_subfuncao_id, $l_programa_id, $l_acao_id ),
 
                 valor => formata_real( $ocorrencia_valor, 2 ),
 
@@ -108,9 +106,9 @@ sub data : Chained('year') Args(0) {
         my $name = $redis->get($funcao);
 
         my $total = $redis->get("CACHE_FUNCAO_SUM_$funcao");
-        if (!$total) {
+        if ( !$total ) {
             $total = &sum_redis_keys( $redis, "$id\_*" );
-            $redis->set("CACHE_FUNCAO_SUM_$funcao", $total);
+            $redis->set( "CACHE_FUNCAO_SUM_$funcao", $total );
         }
 
         push( @data, { id => $id, display => $name, link => "/$id", total => $total } );
@@ -122,106 +120,70 @@ sub data : Chained('year') Args(0) {
 sub data_funcao : PathPart('data') : Chained('year') : Args(1) {
     my ( $self, $c, $target_funcao ) = @_;
 
-    my $redis      = $c->stash->{redis};
-    my @subfuncoes = $redis->keys("$target_funcao\_*");
-    my @our_subfuncoes;
-    my @data;
-
-    foreach my $subfuncao (@subfuncoes) {
-        my ( $funcao_id, $subfuncao_id, $programa_id ) = split( '_', $subfuncao );
-        next if grep( /^$subfuncao_id$/, @our_subfuncoes );
-        push( @our_subfuncoes, $subfuncao_id );
-        my $name = $redis->get("SUBFUNCAO_$subfuncao_id");
-        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_*" );
-        push(
-            @data,
-            {   id      => $subfuncao_id,
-                display => $name,
-                link    => "/$funcao_id/$subfuncao_id",
-                total   => $total
-            }
-        );
-    }
-
-    $c->stash->{data} = \@data;
-    $c->forward('handle_TREE');
+    @{ $c->stash->{target_keys} } = $c->stash->{redis}->keys("$target_funcao\_*");
+    $c->stash->{target_type} = 1;
+    $c->stash->{target_name} = 'SUBFUNCAO';
+    $c->forward('handle_DATA');
 }
 
 sub data_subfuncao : PathPart('data') : Chained('year') : Args(2) {
     my ( $self, $c, $target_funcao, $target_subfuncao ) = @_;
 
-    my $redis     = $c->stash->{redis};
-    my @programas = $redis->keys("$target_funcao\_$target_subfuncao\_*");
-    my @our_programas;
-    my @data;
-
-    foreach my $programa (@programas) {
-        my ( $funcao_id, $subfuncao_id, $programa_id ) = split( '_', $programa );
-        next if grep( /^$programa_id$/, @our_programas );
-        push( @our_programas, $programa_id );
-        my $name = $redis->get("PROGRAMA_$programa_id");
-        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_$programa_id\_*" );
-        push(
-            @data,
-            {   id      => $programa_id,
-                display => $name,
-                link    => "/$funcao_id/$subfuncao_id/$programa_id",
-                total   => $total
-            }
-        );
-    }
-
-    $c->stash->{data} = \@data;
-    $c->forward('handle_TREE');
+    @{ $c->stash->{target_keys} } = $c->stash->{redis}->keys("$target_funcao\_$target_subfuncao\_*");
+    $c->stash->{target_type} = 2;
+    $c->stash->{target_name} = 'PROGRAMA';
+    $c->forward('handle_DATA');
 }
 
 sub data_programas : PathPart('data') : Chained('year') : Args(3) {
     my ( $self, $c, $target_funcao, $target_subfuncao, $target_programa ) = @_;
 
-    my $redis = $c->stash->{redis};
-    my @acoes = $redis->keys("$target_funcao\_$target_subfuncao\_$target_programa\_*");
-    my @our_acoes;
-    my @data;
-
-    foreach my $acao (@acoes) {
-        my ( $funcao_id, $subfuncao_id, $programa_id, $acao_id ) = split( '_', $acao );
-        next if grep( /^$acao_id$/, @our_acoes );
-        push( @our_acoes, $acao_id );
-        my $name = $redis->get("ACAO_$acao_id");
-        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_$programa_id\_$acao_id\_*" );
-        push(
-            @data,
-            {   id      => $acao_id,
-                display => $name,
-                link    => "/$funcao_id/$subfuncao_id/$programa_id/$acao_id",
-                total   => $total
-            }
-        );
-    }
-
-    $c->stash->{data} = \@data;
-    $c->forward('handle_TREE');
+    @{ $c->stash->{target_keys} }
+        = $c->stash->{redis}->keys("$target_funcao\_$target_subfuncao\_$target_programa\_*");
+    $c->stash->{target_type} = 3;
+    $c->stash->{target_name} = 'ACAO';
+    $c->forward('handle_DATA');
 }
 
 sub data_acoes : PathPart('data') : Chained('year') : Args(4) {
     my ( $self, $c, $target_funcao, $target_subfuncao, $target_programa, $target_acao ) = @_;
 
-    my $redis    = $c->stash->{redis};
-    my @credores = $redis->keys("$target_funcao\_$target_subfuncao\_$target_programa\_$target_acao\_*");
-    my @our_credores;
+    @{ $c->stash->{target_keys} }
+        = $c->stash->{redis}->keys("$target_funcao\_$target_subfuncao\_$target_programa\_$target_acao\_*");
+    $c->stash->{target_type} = 4;
+    $c->stash->{target_name} = 'CREDOR';
+    $c->forward('handle_DATA');
+}
+
+sub handle_DATA : Private {
+    my ( $self, $c ) = @_;
+
+    my $redis = $c->stash->{redis};
+    my @our_target;
     my @data;
 
-    foreach my $credor (@credores) {
-        my ( $funcao_id, $subfuncao_id, $programa_id, $acao_id, $credor_id ) = split( '_', $credor );
-        next if grep( /^$credor_id$/, @our_credores );
-        push( @our_credores, $credor_id );
-        my $name = $redis->get("CREDOR_$credor_id");
-        my $total = &sum_redis_keys( $redis, "$target_funcao\_$subfuncao_id\_$programa_id\_$acao_id\_$credor_id" );
+    foreach my $target ( @{ $c->stash->{target_keys} } ) {
+        my @targets = split( '_', $target );
+        my $target_id = $targets[ $c->stash->{target_type} ];
+        next if grep( /^$target_id$/, @our_target );
+
+        push( @our_target, $target_id );
+        my $name = $redis->get( join( '_', $c->stash->{target_name}, $target_id ) );
+        my $total;
+
+        # last
+        if ( @targets - 1 == $c->stash->{target_type} ) {
+            $total = &sum_redis_keys( $redis, join( '_', @targets[ 0 .. $c->stash->{target_type} ] ) );
+        }
+        else {
+            $total = &sum_redis_keys( $redis, join( '_', @targets[ 0 .. $c->stash->{target_type} ], '*' ) );
+        }
+
         push(
             @data,
-            {   id      => $credor_id,
+            {   id      => $target_id,
                 display => $name,
-                link    => "/$funcao_id/$subfuncao_id/$programa_id/$acao_id/$credor_id",
+                link    => join( '/', '', @targets[ 0 .. $c->stash->{target_type} ] ),
                 total   => $total
             }
         );
@@ -280,14 +242,19 @@ sub handle_TREE : Private {
 
     my @zones;
     my @zones_a;
+    my $year = $c->stash->{year};
 
-    my @zones_a = ( { content => 'SP 2011', id => '/sp/2011' } );
-    my @zones = ('SP 2011');
+    my @zones_a = ( { content => "SP $year", id => "/sp/$year" } );
+    my @zones = ("SP $year");
     $c->stash->{zones} = join( ', ', @zones ) if @zones;
     $c->stash->{zones_a} = [ reverse @zones_a ];
 
+    delete $c->stash->{target_keys};
+    delete $c->stash->{target_type};
+    delete $c->stash->{target_name};
     delete $c->stash->{data};
     delete $c->stash->{redis};
+    
     $c->forward('View::JSON');
 }
 

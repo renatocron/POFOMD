@@ -72,19 +72,21 @@ _gaq.push(['_trackPageview']);
 				<li style="margin-left:100px" class="dropdown">
 					<a href="#" class="dropdown-toggle">Federal</a>
 					<ul class="dropdown-menu">
-						<li><a href="/node/1">2010</a></li>
-						<li><a href="/node/170775">2009</a></li>
-						<li><a href="/node/336532">2008</a></li>
-						<li><a href="/node/514165">2007</a></li>
-						<li><a href="/node/692746">2006</a></li>
-						<li><a href="/node/871115">2005</a></li>
+						<li><a href="#">2010</a></li>
+						<li><a href="#">2009</a></li>
+						<li><a href="#">2008</a></li>
+						<li><a href="#">2007</a></li>
+						<li><a href="#">2006</a></li>
+						<li><a href="#">2005</a></li>
 					</ul>
 				</li>
 
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">Estadual</a>
-					<ul class="dropdown-menu">
-						<li><a href="/node/170227">São Paulo 2011</a></li>
+                    <ul class="dropdown-menu">
+                        <li><a href="/sp/2010">São Paulo 2010</a></li>
+                        <li><a href="/sp/2011">São Paulo 2011</a></li>
+                        <li><a href="/sp/2012">São Paulo 2012</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -133,15 +135,17 @@ _gaq.push(['_trackPageview']);
 			<div class="span2">
 				<p>Federal</p>
 				<ul>
-					<li><a href="/node/1">2010</a> - <a href="/node/692746">2006</a> </li>
-					<li><a href="/node/170775">2009</a> - <a href="/node/514165">2007</a></li>
-					<li><a href="/node/336532">2008</a> - <a href="/node/871115">2005</a></li>
+					<li><a href="#">2010</a> - <a href="#">2006</a> </li>
+					<li><a href="#">2009</a> - <a href="#">2007</a></li>
+					<li><a href="#">2008</a> - <a href="#">2005</a></li>
 				</ul>
 			</div>
 			<div class="span3">
 				<p>Estadual</p>
-				<ul>
-					<li><a href="/node/170227">São Paulo 2011</a></li>
+                <ul>
+                    <li><a href="/sp/2010">São Paulo 2010</a></li>
+                    <li><a href="/sp/2011">São Paulo 2011</a></li>
+                    <li><a href="/sp/2012">São Paulo 2012</a></li>
 				</ul>
 			</div>
 

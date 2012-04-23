@@ -32,6 +32,10 @@ sub faq : Chained('base') Args(0) { }
 sub contato : Chained('base') Args(0) { }
 sub todo : Chained('base') Args(0) { }
 
+sub root : Chained('base') PathPart('') Args(0) { 
+    my ($self, $c) = @_;
+    $c->res->redirect('/sp/2001');
+}
 
 =head2 default
 
@@ -39,11 +43,11 @@ Standard 404 error page
 
 =cut
 
-sub default :Path {
-    my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
-    $c->response->status(404);
-}
+#sub default :Path {
+#    my ( $self, $c ) = @_;
+#    $c->response->body( 'Page not found' );
+#    $c->response->status(404);
+#}
 
 =head2 end
 
