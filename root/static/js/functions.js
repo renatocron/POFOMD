@@ -55,6 +55,16 @@ function showData(data,rdata,url,year) {
 	});
 	items.push('</tbody></table>');
 
+    if (rdata.credores) {
+    items.push('<h1>Credores</h1>');
+
+	items.push('<table id="datalist_credores" class="tablesorter_credores" width="95%" align="center"><thead><tr><th>Descri&ccedil;&atilde;o</th><th>Total de gastos</th><th>Porcentagem nesta vis&atilde;o</th></tr></thead><tbody>');
+	$.each(rdata.credores, function(key, val) {
+		items.push('<tr class="alt"><td width="320">' + '<a href="' + val.link  + '">' + val.name + '</a></td><td align="right">' + val.total + '</td><td align="right">' + val.porcentagem + ' %</td></tr>');
+	});
+	items.push('</tbody></table>');
+    }
+
 	items.push("<p>Formato aberto dos dados listados nesta página em JSON:</p>");
 	items.push("<pre><a href='" + url + "' target='_blank'>http://www.paraondefoimeudinheiro.com.br" + url + "</a></pre>");
 	

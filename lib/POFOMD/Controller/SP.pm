@@ -2,7 +2,7 @@ package POFOMD::Controller::SP;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'POFOMD::HandleTree' }
 
 use POFOMD::Utils qw(formata_real formata_valor formata_float bgcolor);
 use Redis;
@@ -53,10 +53,15 @@ sub root_acoes : Chained('year') PathPart('') Args(4) {
     $c->stash->{node} = join( '/', $c->stash->{node}, $funcao_id, $subfuncao_id, $programa_id, $acao_id );
 }
 
-sub credor : Chained('year') PathPart('') Args(5) {
+sub credor_acoes : Chained('year') PathPart('') Args(5) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id, $acao_id, $credor_id ) = @_;
+    $c->res->redirect( join( '/', '', 'sp', $c->stash->{year}, 'credor', $credor_id ) );
+}
+
+sub credor : Chained('year') PathPart('credor') Args(1) {
+    my ( $self, $c, $credor_id ) = @_;
     my $redis = $c->stash->{redis};
-    my $year = $c->stash->{year};
+    my $year  = $c->stash->{year};
     $c->stash->{template} = 'credor.tt';
 
     $c->stash->{credor_nome} = $redis->get("CREDOR_$credor_id");
@@ -161,14 +166,33 @@ sub handle_DATA : Private {
     my $redis = $c->stash->{redis};
     my @our_target;
     my @data;
+    my %sum_credores;
+    my $total_all;
 
+    # Verificando todas as chaves que estão no redis.
     foreach my $target ( @{ $c->stash->{target_keys} } ) {
         my @targets = split( '_', $target );
+
+        # Preparando a ordem para buscar os maiores credores das chaves
+        # em questão.
+        if ( $c->stash->{target_type} != 4 ) {
+            my $credor_id    = $targets[4];
+            my $credor_value = $redis->get($target);
+
+            $sum_credores{$credor_id}
+                = exists( $sum_credores{$credor_id} ) ? $sum_credores{$credor_id} + $credor_value : $credor_value;
+        }
+
+        # Caso este tipo de chave (target_type) já foi processado, não
+        # há necessidade de processar novamente.
         my $target_id = $targets[ $c->stash->{target_type} ];
         next if grep( /^$target_id$/, @our_target );
-
         push( @our_target, $target_id );
+
+        # Buscando o nome do tipo da chave.
         my $name = $redis->get( join( '_', $c->stash->{target_name}, $target_id ) );
+
+        # Calculando o total das chaves em questão.
         my $total;
 
         # last
@@ -179,84 +203,42 @@ sub handle_DATA : Private {
             $total = &sum_redis_keys( $redis, join( '_', @targets[ 0 .. $c->stash->{target_type} ], '*' ) );
         }
 
+        # Preparando dados para handle_TREE
         push(
             @data,
             {   id      => $target_id,
                 display => $name,
-                link    => join( '/',  @targets[ 0 .. $c->stash->{target_type} ] ),
+                link    => join( '/', @targets[ 0 .. $c->stash->{target_type} ] ),
                 total   => $total
             }
         );
+
+        # Soma total para utilizar na porcentagem dos credores
+        $total_all += $total;
     }
 
-    $c->stash->{data} = \@data;
-    $c->forward('handle_TREE');
-}
+    my @all_credores;
+    my @sort_credores = sort { $sum_credores{$b} <=> $sum_credores{$a} } keys %sum_credores;
 
-sub handle_TREE : Private {
-    my ( $self, $c ) = @_;
-
-    my $total = 0;
-    map { $total += $_->{total} } @{ $c->stash->{data} };
-    $c->stash->{total_tree} = formata_real( $total, 2 );
-
-    my @children;
-    my @bgcolor         = bgcolor;
-    my $bgcolor_default = '#c51d18';    # in config file ?
-
-    foreach my $item ( @{ $c->stash->{data} } ) {
-        next unless $item->{total};
-        my $valor_porcentagem = $item->{total} * 100 / $total;
-        my $color             = shift(@bgcolor) || $bgcolor_default;
-        my $valor_print       = formata_valor( $item->{total} );
-        my $porcentagem       = formata_float( $valor_porcentagem, 3 );
-        my $zone              = '/';
-        my $link              = join('/', '', 'sp', $c->stash->{year},
-            $item->{link});
-
-        my $title = $item->{display};
-
+    #foreach my $current_credor (keys %sum_credores) {
+    foreach my $current_credor (@sort_credores) {
+        my $credor_name       = $redis->get("CREDOR_$current_credor");
+        my $credor_total      = $sum_credores{$current_credor};
+        my $valor_porcentagem = $credor_total * 100 / $total_all;
         push(
-            @children,
-            {   data => {
-                    title           => $title,
-                    '$area'         => $porcentagem,
-                    '$color'        => $color,
-                    value           => $porcentagem,
-                    printable_value => $valor_print,
-                    porcentagem     => $porcentagem,
-                    valor_tabela    => formata_real( $item->{total} ),
-                    link            => $link,
-
-                    ( $valor_porcentagem > 3 )
-                    ? ( show_title => 'true' )
-                    : (),
-
-                },
-                children => [],
-                name     => $title,
-                id       => $item->{id}
+            @all_credores,
+            {   name  => $credor_name,
+                id    => $current_credor,
+                total => formata_valor($credor_total),
+                link  => join( '/', '', 'sp', $c->stash->{year}, 'credor', $current_credor ),
+                porcentagem => formata_float( $valor_porcentagem, 5 )
             }
         );
     }
-    $c->stash->{children} = [@children];
 
-    my @zones;
-    my @zones_a;
-    my $year = $c->stash->{year};
-
-    my @zones_a = ( { content => "SP $year", id => "/sp/$year" } );
-    my @zones = ("SP $year");
-    $c->stash->{zones} = join( ', ', @zones ) if @zones;
-    $c->stash->{zones_a} = [ reverse @zones_a ];
-
-    delete $c->stash->{target_keys};
-    delete $c->stash->{target_type};
-    delete $c->stash->{target_name};
-    delete $c->stash->{data};
-    delete $c->stash->{redis};
-    
-    $c->forward('View::JSON');
+    $c->stash->{credores} = \@all_credores if @all_credores;
+    $c->stash->{data} = \@data;
+    $c->forward('handle_TREE');
 }
 
 __PACKAGE__->meta->make_immutable;
