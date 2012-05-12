@@ -1,6 +1,10 @@
 
 <h1>Credor</h1>
 
+<a name="fb_share"></a> 
+<script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript">
+</script>
+
 <h2>[% credor_nome %]</h2>
 
 <br/><br/>
