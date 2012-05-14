@@ -7,6 +7,7 @@ BEGIN { extends 'POFOMD::HandleTree' }
 sub base : Chained('/base') : PathPart('eficiencia/sp/camaramunicipal') : CaptureArgs(1) {
     my ( $self, $c, $year ) = @_;
     $c->stash->{year} = $year;
+    $c->stash->{eficiencia} = 1;
 }
 
 sub root : Chained('base') PathPart('') : Args(0) {}
