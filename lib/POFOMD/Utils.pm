@@ -7,10 +7,19 @@ use vars qw(@ISA @EXPORT_OK $VERSION @EXPORT_FAIL);
 require Exporter;
 
 @ISA       = qw(Exporter);
-@EXPORT_OK = qw(formata_valor formata_float formata_real bgcolor fix_valor);
+@EXPORT_OK = qw(formata_valor formata_float formata_real bgcolor fix_valor sum_redis_keys);
 
 $VERSION = '0.01';
 $VERSION = eval $VERSION;
+
+sub sum_redis_keys {
+    my ( $redis, $key ) = @_;
+    my @all = $redis->keys($key);
+    return 0 unless @all;
+    my $all_total = 0;
+    map { $all_total += $_ } $redis->mget(@all);
+    return $all_total;
+}
 
 # TODO: R$, here ?
 sub formata_valor {
