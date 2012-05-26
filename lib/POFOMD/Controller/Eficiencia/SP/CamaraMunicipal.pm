@@ -23,20 +23,28 @@ sub modalidades : Chained('data') Args(0) {
     my ( $self, $c ) = @_;
     my $redis            = $c->stash->{redis};
     my $year             = $c->stash->{year};
-    my @chaves_executado = $redis->keys("CMSP-MODALIDADE-EXECUTADO-$year-*");
+    my @chaves_executado = $redis->keys("CMSP-MODALIDADE-PLANEJADO-$year-*");
 
-    my %orcamento;
+    my @orcamento;
 
     map {
         my $categoria = $_;
-        $categoria =~ s/CMSP-MODALIDADE-EXECUTADO-$year-//;
-        $orcamento{$categoria} = {
-            executado => $redis->get($_) || 0,
-            planejado => $redis->get("CMSP-MODALIDADE-$year-$categoria") || 0
-        };
+        $categoria =~ s/CMSP-MODALIDADE-PLANEJADO-$year-//;
+        my $executado = $redis->get("CMSP-MODALIDADE-EXECUTADO-$year-$categoria") || 0;
+        my $planejado = $redis->get($_) || 0;
+        my $key_name = "NAME-CMSP-MODALIDADE-PLANEJADO-$year-$categoria";
+        my $name = $redis->get($key_name) || 'indefinido';
+
+        push (@orcamento, {
+            bacteria => $name,
+            planejado => $planejado / 10000000,
+            executado => $executado / 10000000,
+            gram => $planejado && !$executado ? 'negative' : 'positive',
+        });
+
     } @chaves_executado;
 
-    $c->stash->{orcamento} = \%orcamento;
+    $c->stash->{orcamento} = \@orcamento;
 
     $c->forward('handle_DATA');
 }

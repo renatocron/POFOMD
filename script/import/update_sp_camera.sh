@@ -15,8 +15,6 @@ update_pag () {
     -O CMSP-pag2010-2012.xml
 }
 
-#update_sp 2010
-#update_sp 2011
-#update 2012
 update_pag
+update 2012
 

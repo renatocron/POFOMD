@@ -1,45 +1,146 @@
+    
+    
+<p>
+O gráfico abaixo é baseado na criação da ilustração de <a
+href="http://www.nytimes.com/2008/06/01/books/review/Heller-t.html?_r=2&oref=slogin"
+target="_blank">Will Burtin</a>. O objetivo é oferecer uma visualização entre
+o planejamento e execução orçamentária.
+</p>
+    
+    <script type="text/javascript" src="/static/js/protovis/protovis.js"></script>
+    <script type="text/javascript" src="/static/js/antibiotics.js"></script>
+    <style type="text/css">
 
-<div id="center"><div id="fig">
+body {
+  background: rgb(240, 225, 210);
+}
+
+#fig {
+  height: 800px;
+  width: 700px;
+}
+
+    </style>
+     <center><div id="center"><div id="#chart-div">
     <script type="text/javascript+protovis">
 
-var w = 545,
-    h = 280,
-    x = pv.Scale.ordinal(crimea, function(d) d.date).splitBanded(0, w),
-    y = pv.Scale.linear(0, 2200).range(0, h),
-    fill = pv.colors("lightpink", "darkgray", "lightblue"),
-    format = pv.Format.date("%b");
+/* Basic dimensions. */
+var width = 700,
+    height = 700,
+    innerRadius = 90,
+    outerRadius = 300 - 10;
 
+/* Colors. */
+var drugColor = {
+    Planejado: "rgb(10, 50, 100)",
+    Executado: "rgb(200, 70, 50)",
+  }, gramColor = {
+    positive: "rgba(174, 174, 184, .8)",
+    negative: "rgba(230, 130, 110, .8)"
+  };
+
+/* Burtin's radius encoding is, as far as I can tell, sqrt(log(mic)). */
+var min = Math.sqrt(Math.log(.001 * 1E4)),
+    max = Math.sqrt(Math.log(1000 * 1E4)),
+    a = (outerRadius - innerRadius) / (min - max),
+    b = innerRadius - a * max,
+    radius = function(mic) a * Math.sqrt(Math.log(mic * 1E4)) + b;
+
+/*
+ * The pie is split into equal sections for each bacteria, with a blank
+ * section at the top for the grid labels. Each wedge is further
+ * subdivided to make room for the three antibiotics, equispaced.
+ */
+var bigAngle = 2.0 * Math.PI / (bacteria.length + 1),
+    smallAngle = bigAngle / 7;
+
+/* The root panel. */
 var vis = new pv.Panel()
-    .width(w)
-    .height(h)
-    .margin(19.5)
-    .right(40);
+    .canvas('chart-div')
+    .width(width)
+    .height(height)
+    .bottom(100);
 
-vis.add(pv.Layout.Stack)
-    .layers(causes)
-    .values(crimea)
-    .x(function(d) x(d.date))
-    .y(function(d, t) y(d[t]))
-  .layer.add(pv.Bar)
-    .antialias(false)
-    .width(x.range().band)
-    .fillStyle(fill.by(pv.parent))
-    .strokeStyle(function() this.fillStyle().darker())
+/* Background wedges to indicate gram staining color. */
+var bg = vis.add(pv.Wedge)
+    .data(bacteria) // assumes Burtin's order
+    .left(width / 2)
+    .top(height / 2)
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius)
+    .angle(bigAngle)
+    .startAngle(function(d) this.index * bigAngle + bigAngle / 2 - Math.PI / 2)
+    .fillStyle(function(d) gramColor[d.gram]);
+
+/* Antibiotics. */
+bg.add(pv.Wedge)
+    .angle(smallAngle)
+    .startAngle(function(d) bg.startAngle() + smallAngle)
+    .outerRadius(function(d) radius(d.planejado))
+    .fillStyle(drugColor.Planejado)
+  .add(pv.Wedge)
+    .startAngle(function(d) this.proto.startAngle() + 2 * smallAngle)
+    .outerRadius(function(d) radius(d.executado))
+    .fillStyle(drugColor.Executado)
+  .add(pv.Wedge)
+    .outerRadius(function(d) radius(d.neomycin))
+    .fillStyle(drugColor.Neomycin);
+
+/* Circular grid lines. */
+bg.add(pv.Dot)
+    .data(pv.range(-3, 4))
+    .fillStyle(null)
+    .strokeStyle("#eee")
     .lineWidth(1)
-  .anchor("bottom").add(pv.Label)
-    .visible(function() !this.parent.index && !(this.index % 3))
-    .textBaseline("top")
-    .textMargin(5)
-    .text(function(d) format(d.date));
+    .size(function(i) Math.pow(radius(Math.pow(10, i)), 2))
+  .anchor("top").add(pv.Label)
+    .visible(function(i) i < 3)
+    .textBaseline("middle")
+    .text(function(i) Math.pow(10, i).toFixed((i > 0) ? 0 : -i));
 
-vis.add(pv.Rule)
-    .data(y.ticks(5))
-    .bottom(y)
-    .strokeStyle(function(i) i ? "rgba(255, 255, 255, .7)" : "black")
+/* Radial grid lines. */
+bg.add(pv.Wedge)
+    .data(pv.range(bacteria.length + 1))
+    .innerRadius(innerRadius - 10)
+    .outerRadius(outerRadius + 10)
+    .fillStyle(null)
+    .strokeStyle("black")
+    .angle(0);
+
+/* Labels. */
+bg.anchor("outer").add(pv.Label)
+    .textAlign("center")
+    .text(function(d) d.bacteria);
+
+/* Antibiotic legend. */
+vis.add(pv.Bar)
+    .data(pv.keys(drugColor))
+    .right(width / 2 + 3)
+    .top(function() height / 2 - 28 + this.index * 18)
+    .fillStyle(function(d) drugColor[d])
+    .width(36)
+    .height(12)
   .anchor("right").add(pv.Label)
-    .textMargin(6);
+    .textMargin(6)
+    .textAlign("left");
+
+/* Gram-stain legend. */
+vis.add(pv.Dot)
+    .data(pv.keys(gramColor))
+    .left(width / 2 - 20)
+    .bottom(function() -60 + this.index * 18)
+    .fillStyle(function(d) gramColor[d])
+    .strokeStyle(null)
+    .size(30)
+  .anchor("right").add(pv.Label)
+    .textMargin(6)
+    .textAlign("left")
+    .text(function(d) "" + d == 'negative' ? 'Não há dados sobre execução' :
+    'Há dados sobre execução');
 
 vis.render();
 
     </script>
-  </div></div>
+    </center>
+
+

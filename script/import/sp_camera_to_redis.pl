@@ -33,11 +33,15 @@ foreach my $modalidade ( @{ $ref->{G_Categoria} } ) {
     #    print "Valor: $modalidade_total \n";
 
     #    print "\n";
-    my $key = join( '-', 'CMSP', 'MODALIDADE', $year, $modalidade->{Categoria} );
+    my $key = join( '-', 'CMSP', 'MODALIDADE', 'PLANEJADO', $year, $modalidade->{Categoria} );
 
     print "$key = $modalidade_total\n";
     $redis->set($key, $modalidade_total);
 
+    $key = join( '-', 'NAME', $key );
+    my $name = $modalidade->{Categoria_Descricao};
+    print "$key = $name\n";
+    $redis->set($key, $name);
     #    print "-" x 80 . "\n";
 }
 
