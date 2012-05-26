@@ -23,6 +23,7 @@ requires 'Catalyst::View::JSON';
 requires 'FCGI';
 requires 'FCGI::ProcManager';
 requires 'Redis';
+requires 'XML::Simple';
 
 test_requires 'Test::More' => '0.88';
 catalyst;
