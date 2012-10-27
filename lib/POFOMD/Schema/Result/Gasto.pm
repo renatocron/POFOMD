@@ -91,7 +91,7 @@ __PACKAGE__->belongs_to(
 );
 __PACKAGE__->belongs_to(
     pagamento => 'POFOMD::Schema::Result::Pagamento' =>
-      { 'foreign.pagamento_id' => 'self.pagamento_id' },
+      { 'foreign.id' => 'self.pagamento_id' },
     {
         is_deferrable => 1,
         on_delete     => "CASCADE",
