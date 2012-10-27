@@ -9,12 +9,24 @@ __PACKAGE__->load_components(qw(Core));
 
 __PACKAGE__->table('funcao');
 __PACKAGE__->add_columns(
-    'funcao_id' => { 'data_type' => 'integer', 'is_auto_increment' => 1 },
-    'codigo'    => { 'data_type' => 'varchar' },
-    'nome'      => { 'data_type' => 'varchar' }
+    'id' => {
+        'data_type'         => 'integer',
+        'is_auto_increment' => 1,
+        is_nullable         => 0,
+        sequence            => "funcao_id_seq",
+    },
+    'codigo' => { 'data_type' => 'varchar' },
+    'nome'   => { 'data_type' => 'varchar' }
 );
 
-__PACKAGE__->set_primary_key('funcao_id');
+__PACKAGE__->set_primary_key('id');
+
+__PACKAGE__->has_many(
+    'gastos',
+    'POFOMD::Schema::Result::Gasto',
+    { "foreign.funcao_id" => "self.id" },
+    { cascade_copy        => 0, cascade_delete => 0 },
+);
 
 1;
 
