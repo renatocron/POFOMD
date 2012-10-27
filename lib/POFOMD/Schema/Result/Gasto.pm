@@ -13,7 +13,7 @@ __PACKAGE__->add_columns(
         is_nullable         => 0,
         sequence            => "gasto_id_seq",
     },
-    'dataset_id'      => { 'data_type' => 'interger' },
+    'dataset_id'      => { 'data_type' => 'integer' },
     'funcao_id'       => { 'data_type' => 'integer' },
     'subfuncao_id'    => { 'data_type' => 'integer' },
     'programa_id'     => { 'data_type' => 'integer' },
