@@ -10,7 +10,8 @@ __PACKAGE__->load_components(qw(Core));
 __PACKAGE__->table('despesa');
 __PACKAGE__->add_columns(
     'despesa_id' => { 'data_type' => 'integer', 'is_auto_increment' => 1 },
-    'nome'      => { 'data_type' => 'varchar' }
+    'codigo'     => { 'data_type' => 'varchar' },
+    'nome'       => { 'data_type' => 'varchar' }
 );
 
 __PACKAGE__->set_primary_key('despesa_id');

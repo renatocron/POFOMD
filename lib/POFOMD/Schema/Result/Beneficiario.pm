@@ -10,6 +10,7 @@ __PACKAGE__->load_components(qw(Core));
 __PACKAGE__->table('beneficiario');
 __PACKAGE__->add_columns(
     'beneficiario_id' => { 'data_type' => 'integer', 'is_auto_increment' => 1 },
+    'codigo'    => { 'data_type' => 'varchar' },
     'nome'      => { 'data_type' => 'varchar' },
     'documento' => { 'data_type' => 'varchar' }
 );
