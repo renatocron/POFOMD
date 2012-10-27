@@ -16,6 +16,8 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key('dataset_id');
 
+__PACKAGE__->add_unique_constraint( [ qw/nome ano/ ] );
+
 __PACKAGE__->has_many( gastos => 'POFOMD::Schema::Result::Gasto', 'dataset_id' );
 
 1;

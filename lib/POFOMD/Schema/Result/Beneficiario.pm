@@ -17,6 +17,8 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key('beneficiario_id');
 
+__PACKAGE__->add_unique_constraint( [ qw/codigo/ ] );
+
 __PACKAGE__->has_many( gastos => "POFOMD::Schema::Result::Gasto", 'beneficiario_id' );
 
 1;
