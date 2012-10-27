@@ -38,6 +38,6 @@ __PACKAGE__->belongs_to(
     despesa_id => 'POFOMD::Schema::Result::Despesa' => 'despesa_id' );
 __PACKAGE__->belongs_to(
     pagamento_id => 'POFOMD::Schema::Result::Pagamento' => 'pagamento_id' );
-_
+
 1;
 
