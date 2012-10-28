@@ -21,7 +21,7 @@ __PACKAGE__->add_columns(
     'beneficiario_id' => { 'data_type' => 'integer' },
     'despesa_id'      => { 'data_type' => 'integer' },
     'pagamento_id'    => { 'data_type' => 'integer' },
-    'valor_pago'      => { 'data_type' => 'integer' }
+    'valor_pago'      => { 'data_type' => 'float' }
 );
 
 __PACKAGE__->set_primary_key('id');
