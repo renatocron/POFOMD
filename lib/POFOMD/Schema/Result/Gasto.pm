@@ -82,7 +82,7 @@ __PACKAGE__->belongs_to(
 );
 __PACKAGE__->belongs_to(
     despesa => 'POFOMD::Schema::Result::Despesa' =>
-      { 'foreign.id' => 'self.despesas_id' },
+      { 'foreign.id' => 'self.despesa_id' },
     {
         is_deferrable => 1,
         on_delete     => "CASCADE",
