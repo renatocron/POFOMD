@@ -19,7 +19,7 @@ __PACKAGE__->add_columns(
     'programa_id'     => { 'data_type' => 'integer' },
     'acao_id'         => { 'data_type' => 'integer' },
     'beneficiario_id' => { 'data_type' => 'integer' },
-    'despesa_id'      => { 'data_type' => 'interger' },
+    'despesa_id'      => { 'data_type' => 'integer' },
     'pagamento_id'    => { 'data_type' => 'integer' },
     'valor_pago'      => { 'data_type' => 'integer' }
 );
