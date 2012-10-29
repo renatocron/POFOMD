@@ -25,7 +25,7 @@ __PACKAGE__->set_primary_key('id');
 __PACKAGE__->add_unique_constraint( [qw/nome/] );
 
 __PACKAGE__->belongs_to(
-    'periodos' => 'POFOMD::Schema::Result::Periodo' =>
+    'periodo' => 'POFOMD::Schema::Result::Periodo' =>
       { 'foreign.id' => 'self.periodo_id' },
     {
         is_deferrable => 1,

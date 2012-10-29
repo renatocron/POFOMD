@@ -20,7 +20,7 @@ if ( scalar(@ARGV) != 2 ) {
 
 my $year = $ARGV[0];
 my $dataset =
-  $rs_dataset->find_or_create( { nome => 'Sao Paulo', ano => $year } );
+  $rs_dataset->find_or_create( { nome => 'Sao Paulo', periodo => $schema->resultset('Periodo')->find_or_create( { ano => $year } ) } );
 
 my (
     $ANO_DE_REFERENCIA,         $CODIGO_ORGAO,
