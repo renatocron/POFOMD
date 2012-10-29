@@ -16,13 +16,23 @@ __PACKAGE__->add_columns(
         sequence            => "dataset_id_seq",
     },
 
-    'nome' => { 'data_type' => 'varchar' },
-    'ano'  => { 'data_type' => 'integer' }
+    'nome'       => { 'data_type' => 'varchar' },
+    'periodo_id' => { 'data_type' => 'integer' },
 );
 
 __PACKAGE__->set_primary_key('id');
 
-__PACKAGE__->add_unique_constraint( [qw/nome ano/] );
+__PACKAGE__->add_unique_constraint( [qw/nome/] );
+
+__PACKAGE__->belongs_to(
+    'periodos' => 'POFOMD::Schema::Result::Periodo' =>
+      { 'foreign.id' => 'self.periodo_id' },
+    {
+        is_deferrable => 1,
+        on_delete     => "CASCADE",
+        on_update     => "CASCADE"
+    },
+);
 
 __PACKAGE__->has_many(
     'gastos',
