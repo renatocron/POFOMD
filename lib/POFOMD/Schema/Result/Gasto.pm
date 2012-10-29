@@ -7,12 +7,6 @@ use base 'DBIx::Class::Core';
 
 __PACKAGE__->table('gasto');
 __PACKAGE__->add_columns(
-    'id' => {
-        'data_type'         => 'integer',
-        'is_auto_increment' => 1,
-        is_nullable         => 0,
-        sequence            => "gasto_id_seq",
-    },
     'dataset_id'      => { 'data_type' => 'integer' },
     'funcao_id'       => { 'data_type' => 'integer' },
     'subfuncao_id'    => { 'data_type' => 'integer' },
@@ -24,7 +18,7 @@ __PACKAGE__->add_columns(
     'valor_pago'      => { 'data_type' => 'float' }
 );
 
-__PACKAGE__->set_primary_key('id');
+__PACKAGE__->set_primary_key(qw/dataset_id funcao_id subfuncao_id programa_id acao_id beneficiario_id despesa_id pagamento_id/);
 
 __PACKAGE__->belongs_to(
     dataset => 'POFOMD::Schema::Result::Dataset' =>
