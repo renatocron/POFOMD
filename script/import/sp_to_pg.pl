@@ -132,11 +132,20 @@ while ( my $row = $csv->getline($fh) ) {
 
             pagamento => $schema->resultset('Pagamento')->find_or_create(
                 {
+                    numero_processo => &remover_acentos($NUMERO_PROCESSO),
+                    numero_nota_empenho => &remover_acentos($NUMERO_NOTA_DE_EMPENHO),
                     tipo_licitacao  => &remover_acentos($TIPO_LICITACAO),
                     valor_empenhado => $VALOR_EMPENHADO,
                     valor_liquidado => $VALOR_LIQUIDADO,
                     valor_pago_anos_anteriores =>
                       $VALOR_PAGO_DE_ANOS_ANTERIORES || 0
+                }
+            ),
+            
+            recurso => $schema->resultset('Recurso')->find_or_create(
+                {
+                    codigo => &remover_acentos($CODIGO_FONTE_DE_RECURSOS),
+                    nome => &remover_acentos($NOME_FONTE_DE_RECURSOS)
                 }
             ),
             valor_pago => $VALOR_PAGO

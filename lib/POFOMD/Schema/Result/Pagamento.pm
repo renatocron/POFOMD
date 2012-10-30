@@ -15,6 +15,8 @@ __PACKAGE__->add_columns(
         is_nullable         => 0,
         sequence            => "pagamento_id_seq",
     },
+    'numero_processo'            => { 'data_type' => 'varchar' },
+    'numero_nota_empenho'        => { 'data_type' => 'varchar' },
     'tipo_licitacao'             => { 'data_type' => 'varchar' },
     'valor_empenhado'            => { 'data_type' => 'float' },
     'valor_liquidado'            => { 'data_type' => 'float' },
@@ -22,6 +24,8 @@ __PACKAGE__->add_columns(
 );
 
 __PACKAGE__->set_primary_key('id');
+
+# unique ? numero_processo numero_nota_empenho
 
 __PACKAGE__->has_many(
     'gastos',

@@ -15,10 +15,11 @@ __PACKAGE__->add_columns(
     'beneficiario_id' => { 'data_type' => 'integer' },
     'despesa_id'      => { 'data_type' => 'integer' },
     'pagamento_id'    => { 'data_type' => 'integer' },
+    'recurso_id'      => { 'data_type' => 'integer' },
     'valor_pago'      => { 'data_type' => 'float' }
 );
 
-__PACKAGE__->set_primary_key(qw/dataset_id funcao_id subfuncao_id programa_id acao_id beneficiario_id despesa_id pagamento_id/);
+__PACKAGE__->set_primary_key(qw/dataset_id funcao_id subfuncao_id programa_id acao_id beneficiario_id despesa_id pagamento_id recurso_id/);
 
 __PACKAGE__->belongs_to(
     dataset => 'POFOMD::Schema::Result::Dataset' =>
@@ -83,6 +84,7 @@ __PACKAGE__->belongs_to(
         on_update     => "CASCADE"
     },
 );
+
 __PACKAGE__->belongs_to(
     pagamento => 'POFOMD::Schema::Result::Pagamento' =>
       { 'foreign.id' => 'self.pagamento_id' },
@@ -92,6 +94,17 @@ __PACKAGE__->belongs_to(
         on_update     => "CASCADE"
     },
 );
+
+__PACKAGE__->belongs_to(
+    recurso => 'POFOMD::Schema::Result::Recurso' =>
+      { 'foreign.id' => 'self.recurso_id' },
+    {
+        is_deferrable => 1,
+        on_delete     => "CASCADE",
+        on_update     => "CASCADE"
+    },
+);
+
 
 1;
 
