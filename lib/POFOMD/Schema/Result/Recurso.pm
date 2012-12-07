@@ -13,7 +13,7 @@ __PACKAGE__->add_columns(
         'data_type'         => 'integer',
         'is_auto_increment' => 1,
         is_nullable         => 0,
-        sequence            => "funcao_id_seq",
+        sequence            => "recurso_id_seq",
     },
     'codigo' => { 'data_type' => 'varchar' },
     'nome'   => { 'data_type' => 'varchar' }

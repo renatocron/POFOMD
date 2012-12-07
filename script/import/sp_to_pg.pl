@@ -130,6 +130,13 @@ while ( my $row = $csv->getline($fh) ) {
                 }
             ),
 
+            gestora => $schema->resultset('Gestora')->find_or_create(
+                {
+                    codigo =>  $CODIGO_UNIDADE_GESTORA,
+                    nome => $NOME_UNIDADE_GESTORA
+                }
+            ),
+
             pagamento => $schema->resultset('Pagamento')->find_or_create(
                 {
                     numero_processo => &remover_acentos($NUMERO_PROCESSO),
