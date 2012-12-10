@@ -60,7 +60,12 @@ function showData(data,rdata,url,year) {
 
 	items.push('<table id="datalist_credores" class="tablesorter_credores" width="95%" align="center"><thead><tr><th>Descri&ccedil;&atilde;o</th><th>Total de gastos</th><th>Porcentagem nesta vis&atilde;o</th></tr></thead><tbody>');
 	$.each(rdata.credores, function(key, val) {
-		items.push('<tr class="alt"><td width="320">' + '<a href="' + val.link  + '">' + val.name + '</a></td><td align="right">' + val.total + '</td><td align="right">' + val.porcentagem + ' %</td></tr>');
+		if (val.name == 'NAO INFORMADO' || val.name == 'NAO-INFORMADO') {
+		    items.push('<tr class="alt"><td width="320">' + val.name + '</td><td align="right">' + val.total + '</td><td align="right">' + val.porcentagem + ' %</td></tr>');
+		} else {
+			items.push('<tr class="alt"><td width="320">' + '<a href="' + val.link  + '">' + val.name + '</a></td><td align="right">' + val.total + '</td><td align="right">' + val.porcentagem + ' %</td></tr>');
+		}
+
 	});
 	items.push('</tbody></table>');
     }
