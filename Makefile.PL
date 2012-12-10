@@ -30,6 +30,9 @@ requires 'Text::CSV';
 requires 'SQL::Translator';
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'Redis';
+requires 'Text::Unidecode';
+requires 'Text::CSV_XS';
+requires 'Text2URI';
 
 test_requires 'Test::More' => '0.88';
 catalyst;
