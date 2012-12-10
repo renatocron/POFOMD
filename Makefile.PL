@@ -24,6 +24,12 @@ requires 'FCGI';
 requires 'FCGI::ProcManager';
 requires 'Redis';
 requires 'XML::Simple';
+requires 'dbicadmin';
+requires 'MooseX::Types::JSON';
+requires 'Text::CSV';
+requires 'SQL::Translator';
+requires 'Catalyst::Model::DBIC::Schema';
+requires 'Redis';
 
 test_requires 'Test::More' => '0.88';
 catalyst;
