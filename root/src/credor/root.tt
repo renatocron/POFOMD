@@ -1,0 +1,23 @@
+
+<h1>Credor</h1>
+
+<a name="fb_share"></a> 
+<script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" type="text/javascript">
+</script>
+
+<h2>[% credor.nome %]</h2>
+
+<br/><br/>
+-----
+
+[% FOREACH item IN credor.gastos %]
+<p>
+<b>Função:</b> <a href="[% item.funcao.nome %]">[% item.funcao.nome %]</a></br>
+<b>Sub-função:</b> <a href="[% item.subfuncao_url %]">[% item.subfuncao.nome %]</a></br>
+<b>Programa:</b> <a href="[% item.programa_url %]">[% item.programa.nome %]</a></br>
+<b>Ação:</b> <a href="[% item.acao_url %]">[% item.acao.nome %]</a></br>
+<b>Valor:</b> R$ [% item.total %]</br>
+</p>
+[% END %]
+
+<b>Total: R$ [% credor.total %]</b></br>

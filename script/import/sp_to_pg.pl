@@ -7,6 +7,9 @@ use POFOMD::Schema;
 #use Text::Iconv;
 use Text::Unidecode;
 use Text::CSV_XS;
+use Text2URI;
+
+my $t = new Text2URI();
 
 my $schema = POFOMD::Schema->connect( "dbi:Pg:host=localhost;dbname=pofomd",
     "postgres", "" );
@@ -18,9 +21,17 @@ if ( scalar(@ARGV) != 2 ) {
     exit;
 }
 
-my $year = $ARGV[0];
-my $dataset =
-  $rs_dataset->find_or_create( { nome => 'Sao Paulo', periodo => $schema->resultset('Periodo')->find_or_create( { ano => $year } ) } );
+my $year    = $ARGV[0];
+my $ds_name = 'Estado de São Paulo';
+
+my $dataset = $rs_dataset->find_or_create(
+    {
+        nome => $ds_name,
+        periodo =>
+          $schema->resultset('Periodo')->find_or_create( { ano => $year } ),
+        uri => $t->translate(join('-', 'estado-sao-paulo', $year))
+    }
+);
 
 my (
     $ANO_DE_REFERENCIA,         $CODIGO_ORGAO,
@@ -78,16 +89,16 @@ $csv->bind_columns(
 
 open my $fh, $ARGV[1] or die 'error';
 
-my $line   = 0;
+my $line = 0;
 
 while ( my $row = $csv->getline($fh) ) {
     $line++;
-    next if $CODIGO_FUNCAO eq 'CODIGO FUNCAO' or !$VALOR_PAGO;
+    next if $CODIGO_FUNCAO eq 'CODIGO FUNCAO' or !$VALOR_LIQUIDADO;
     warn $line;
     $VALOR_EMPENHADO               =~ s/\,/\./g;
     $VALOR_LIQUIDADO               =~ s/\,/\./g;
     $VALOR_PAGO_DE_ANOS_ANTERIORES =~ s/\,/\./g;
-    $VALOR_PAGO                    =~ s/\,/\./g;
+    $VALOR_LIQUIDADO                    =~ s/\,/\./g;
 
     my $obj = $rs->create(
         {
@@ -119,7 +130,8 @@ while ( my $row = $csv->getline($fh) ) {
                 {
                     codigo    => $CODIGO_CREDOR,
                     nome      => &remover_acentos($NOME_CREDOR),
-                    documento => '0'
+                    documento => '0',
+                    uri       => $t->translate( &remover_acentos($NOME_CREDOR) )
                 }
             ),
 
@@ -132,15 +144,16 @@ while ( my $row = $csv->getline($fh) ) {
 
             gestora => $schema->resultset('Gestora')->find_or_create(
                 {
-                    codigo =>  $CODIGO_UNIDADE_GESTORA,
-                    nome => $NOME_UNIDADE_GESTORA
+                    codigo => $CODIGO_UNIDADE_GESTORA,
+                    nome   => $NOME_UNIDADE_GESTORA
                 }
             ),
 
             pagamento => $schema->resultset('Pagamento')->find_or_create(
                 {
                     numero_processo => &remover_acentos($NUMERO_PROCESSO),
-                    numero_nota_empenho => &remover_acentos($NUMERO_NOTA_DE_EMPENHO),
+                    numero_nota_empenho =>
+                      &remover_acentos($NUMERO_NOTA_DE_EMPENHO),
                     tipo_licitacao  => &remover_acentos($TIPO_LICITACAO),
                     valor_empenhado => $VALOR_EMPENHADO,
                     valor_liquidado => $VALOR_LIQUIDADO,
@@ -148,14 +161,14 @@ while ( my $row = $csv->getline($fh) ) {
                       $VALOR_PAGO_DE_ANOS_ANTERIORES || 0
                 }
             ),
-            
+
             recurso => $schema->resultset('Recurso')->find_or_create(
                 {
                     codigo => &remover_acentos($CODIGO_FONTE_DE_RECURSOS),
-                    nome => &remover_acentos($NOME_FONTE_DE_RECURSOS)
+                    nome   => &remover_acentos($NOME_FONTE_DE_RECURSOS)
                 }
             ),
-            valor_pago => $VALOR_PAGO
+            valor => $VALOR_LIQUIDADO
         }
     );
 
@@ -229,5 +242,4 @@ sub remover_acentos {
 
     return $var;
 }
-
 

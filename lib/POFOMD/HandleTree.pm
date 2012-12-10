@@ -19,14 +19,16 @@ sub handle_TREE : Private {
 
     foreach my $item ( @{ $c->stash->{data} } ) {
         next unless $item->{total};
+       
+        my $uri = $c->req->uri->path;
+        $uri =~ s/^(\/.*)(\/.*)\/data/$1$2/;
+
         my $valor_porcentagem = $item->{total} * 100 / $total;
         my $color             = shift(@bgcolor) || $bgcolor_default;
         my $valor_print       = formata_valor( $item->{total} );
         my $porcentagem       = formata_float( $valor_porcentagem, 3 );
         my $zone              = '/';
-        my $link              = join('/', '', 'sp', $c->stash->{year},
-            $item->{link});
-
+        my $link              = $item->{fplink} ? $item->{fplink} : join('/', $uri, $item->{link});
         my $title = $item->{display};
 
         push(
@@ -56,10 +58,38 @@ sub handle_TREE : Private {
 
     my @zones;
     my @zones_a;
-    my $year = $c->stash->{year};
+    my $uri = $c->stash->{dataset} ? $c->stash->{dataset}->nome || '' : '';
 
-    my @zones_a = ( { content => "SP $year", id => "/sp/$year" } );
-    my @zones = ("SP $year");
+    @zones_a = ( { content => $uri, id => "/dataset/$uri" } );
+
+    my $base_url = $c->stash->{dataset} ? join('/', '', 'dataset', $c->stash->{dataset}->uri) : '/';
+
+    if ($c->stash->{funcao_id}) {
+        $base_url = join('/', $base_url, $c->stash->{funcao_id});
+        my $obj = $c->model('DB::Funcao')->find($c->stash->{funcao_id});
+        push(@zones_a, ( { content => $obj->nome, id => $base_url } ) ) if $obj;
+    }
+
+    if ($c->stash->{subfuncao_id}) {
+        $base_url = join('/', $base_url, $c->stash->{subfuncao_id});
+        my $obj = $c->model('DB::Subfuncao')->find($c->stash->{subfuncao_id});
+        push(@zones_a, ( { content => $obj->nome, id => $base_url } ) ) if $obj;
+    }
+
+    if ($c->stash->{programa_id}) {
+        $base_url = join('/', $base_url, $c->stash->{programa_id});
+        my $obj = $c->model('DB::Programa')->find($c->stash->{programa_id});
+        push(@zones_a, ( { content => $obj->nome, id => $base_url } ) ) if $obj;
+    }
+
+    if ($c->stash->{acao_id}) {
+        $base_url = join('/', $base_url, $c->stash->{acao_id});
+        my $obj = $c->model('DB::Acao')->find($c->stash->{acao_id});
+        push(@zones_a, ( { content => $obj->nome, id => $base_url } ) ) if $obj;
+    }
+
+
+
     $c->stash->{zones} = join( ', ', @zones ) if @zones;
     $c->stash->{zones_a} = [ reverse @zones_a ];
 
@@ -68,7 +98,9 @@ sub handle_TREE : Private {
     delete $c->stash->{target_name};
     delete $c->stash->{data};
     delete $c->stash->{redis};
-    
+    delete $c->stash->{rs};
+    delete $c->stash->{dataset};
+
     $c->forward('View::JSON');
 }
 

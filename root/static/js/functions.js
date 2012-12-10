@@ -24,7 +24,7 @@ function geturljson(url,year) {
           if (item == rdata.zones_a.length - 1) {
           list.append('<li class="active">' + rdata.zones_a[item].content + '</li>' + "\n");
           } else { 
-          list.append('<li><a href="/node/' + rdata.zones_a[item].id +'">' + rdata.zones_a[item].content + '</a> <span class="divider">/</span></li>' + "\n"); 
+          list.append('<li><a href="' + rdata.zones_a[item].id +'">' + rdata.zones_a[item].content + '</a> <span class="divider">/</span></li>' + "\n"); 
           }
         }
 

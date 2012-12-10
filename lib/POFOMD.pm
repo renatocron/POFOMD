@@ -50,8 +50,7 @@ __PACKAGE__->config(
             ],
             [qw(root lib)]
         ]
-    },
-
+    }
 );
 
 # Start the application

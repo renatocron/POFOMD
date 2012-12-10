@@ -4,6 +4,7 @@ package POFOMD::Schema::Result::Gasto;
 use strict;
 use warnings;
 use base 'DBIx::Class::Core';
+use POFOMD::Utils qw(formata_valor);
 
 __PACKAGE__->table('gasto');
 __PACKAGE__->add_columns(
@@ -17,10 +18,12 @@ __PACKAGE__->add_columns(
     'pagamento_id'    => { 'data_type' => 'integer' },
     'gestora_id'      => { 'data_type' => 'integer' },
     'recurso_id'      => { 'data_type' => 'integer' },
-    'valor_pago'      => { 'data_type' => 'float' }
+    'valor'           => { 'data_type' => 'float' }
 );
 
-__PACKAGE__->set_primary_key(qw/dataset_id funcao_id subfuncao_id programa_id acao_id beneficiario_id despesa_id pagamento_id gestora_id recurso_id/);
+__PACKAGE__->set_primary_key(
+    qw/dataset_id funcao_id subfuncao_id programa_id acao_id beneficiario_id despesa_id pagamento_id gestora_id recurso_id/
+);
 
 __PACKAGE__->belongs_to(
     dataset => 'POFOMD::Schema::Result::Dataset' =>
@@ -116,6 +119,7 @@ __PACKAGE__->belongs_to(
     },
 );
 
+sub total { formata_valor( shift->valor ) }
 
 1;
 

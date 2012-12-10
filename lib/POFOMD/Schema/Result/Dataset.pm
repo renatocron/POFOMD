@@ -4,6 +4,7 @@ package POFOMD::Schema::Result::Dataset;
 use strict;
 use warnings;
 use base 'DBIx::Class::Core';
+use POFOMD::Utils qw(formata_valor);
 
 __PACKAGE__->load_components(qw(Core));
 
@@ -18,11 +19,13 @@ __PACKAGE__->add_columns(
 
     'nome'       => { 'data_type' => 'varchar' },
     'periodo_id' => { 'data_type' => 'integer' },
+    'uri'        => { 'data_type' => 'varchar' }
 );
 
 __PACKAGE__->set_primary_key('id');
 
-__PACKAGE__->add_unique_constraint( [qw/nome/] );
+__PACKAGE__->add_unique_constraint( [qw/nome periodo_id/] );
+__PACKAGE__->add_unique_constraint( [qw/uri/] );
 
 __PACKAGE__->belongs_to(
     'periodo' => 'POFOMD::Schema::Result::Periodo' =>
