@@ -29,6 +29,7 @@ The root page (/)
 
 sub base : Chained('/') PathPart('') CaptureArgs(0) { }
 sub faq : Chained('base') Args(0) { }
+sub sobre : Chained('base') Args(0) { } 
 sub contato : Chained('base') Args(0) { }
 sub todo : Chained('base') Args(0) { }
 
