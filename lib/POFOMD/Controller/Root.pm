@@ -34,7 +34,6 @@ sub todo : Chained('base') Args(0) { }
 
 sub root : Chained('base') PathPart('') Args(0) { 
     my ($self, $c) = @_;
-    $c->res->redirect('/sp/2012');
 }
 
 =head2 default
