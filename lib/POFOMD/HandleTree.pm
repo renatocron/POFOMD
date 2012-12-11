@@ -91,7 +91,7 @@ sub handle_TREE : Private {
 
 
     $c->stash->{zones} = join( ', ', @zones ) if @zones;
-    $c->stash->{zones_a} = [ reverse @zones_a ];
+    $c->stash->{zones_a} = [ @zones_a ];
 
     delete $c->stash->{target_keys};
     delete $c->stash->{target_type};
