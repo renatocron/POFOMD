@@ -65,24 +65,28 @@ sub root : Chained('year') PathPart('') Args(0) {
 sub root_funcoes : Chained('year') PathPart('') Args(1) {
     my ( $self, $c, $funcao_id ) = @_;
     $c->stash->{node} = join( '/', $c->stash->{node}, $funcao_id );
+    $c->stash->{nodetype} = 'funcao';
 }
 
 sub root_subfuncoes : Chained('year') PathPart('') Args(2) {
     my ( $self, $c, $funcao_id, $subfuncao_id ) = @_;
     $c->stash->{node} =
       join( '/', $c->stash->{node}, $funcao_id, $subfuncao_id );
+    $c->stash->{nodetype} = 'subfuncao';
 }
 
 sub root_programas : Chained('year') PathPart('') Args(3) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id ) = @_;
     $c->stash->{node} =
       join( '/', $c->stash->{node}, $funcao_id, $subfuncao_id, $programa_id );
+    $c->stash->{nodetype} = 'programa';
 }
 
 sub root_acoes : Chained('year') PathPart('') Args(4) {
     my ( $self, $c, $funcao_id, $subfuncao_id, $programa_id, $acao_id ) = @_;
     $c->stash->{node} = join( '/',
         $c->stash->{node}, $funcao_id, $subfuncao_id, $programa_id, $acao_id );
+    $c->stash->{nodetype} = 'acao';
 }
 
 sub data : Chained('year') CaptureArgs(0) {
