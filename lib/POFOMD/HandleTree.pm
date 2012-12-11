@@ -59,7 +59,7 @@ sub handle_TREE : Private {
     my @zones;
     my @zones_a;
     my $uri = $c->stash->{dataset} ? $c->stash->{dataset}->uri || '#' : '#';
-    my $uri_name $c->stash->{dataset} ? $c->stash->{dataset}->nome || '' : '';
+    my $uri_name = $c->stash->{dataset} ? $c->stash->{dataset}->nome || '' : '';
 
     @zones_a = ( { content => $uri_name, id => "/dataset/$uri" } );
 
