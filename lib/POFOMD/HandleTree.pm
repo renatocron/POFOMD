@@ -58,9 +58,10 @@ sub handle_TREE : Private {
 
     my @zones;
     my @zones_a;
-    my $uri = $c->stash->{dataset} ? $c->stash->{dataset}->nome || '' : '';
+    my $uri = $c->stash->{dataset} ? $c->stash->{dataset}->uri || '#' : '#';
+    my $uri_name $c->stash->{dataset} ? $c->stash->{dataset}->nome || '' : '';
 
-    @zones_a = ( { content => $uri, id => "/dataset/$uri" } );
+    @zones_a = ( { content => $uri_name, id => "/dataset/$uri" } );
 
     my $base_url = $c->stash->{dataset} ? join('/', '', 'dataset', $c->stash->{dataset}->uri) : '/';
 
