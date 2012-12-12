@@ -1,0 +1,43 @@
+<div class='sobre'>
+<h1>Para Onde Foi o Meu Dinheiro</h1>
+
+Sistema elaborado para demonstrar os gastos públicos, classificados por FUNÇÃO de Governo e seus detalhamentos. Esta ferramenta permite ao usuário conhecer toda a tramitação orçamentária, indicando inclusive quem recebeu o recurso empenhado. A proposta é fornecer condições de maior clareza do destino dos tributos, bem como maior “mobilidade” no manuseio das informações obtidas.<br /><br />
+
+<h1>TERMOS TÉCNICOS</h1>
+
+<h2>Função</h2>
+
+É o maior nível de agregação das diversas áreas de atuação do setor público. A função está relacionada com a missão institucional do órgão, por exemplo, cultura, educação, saúde, defesa, que guarda relação com os respectivos Ministérios. O primeiro quadro deste sistema apresenta os dados distribuídos nas respectivas funções de governo<br /><br />
+
+<h2>Subfunção</h2>
+Representa um nível de agregação imediatamente inferior à função e deve evidenciar cada área da atuação governamental, por intermédio da agregação de determinado subconjunto de despesas e identificação da natureza básica das ações que se aglutinam em torno das funções. As subfunções podem ser combinadas com funções diferentes daquelas às quais estão relacionadas na Portaria da Secretaria do Tesouro Nacional – STN - nº 42, de 1999<br /><br />
+
+
+<h1>Programa</h1>
+O programa é o instrumento de organização da atuação governamental que articula um conjunto de ações que concorrem para a concretização de um objetivo comum preestabelecido, mensurado por indicadores instituídos no plano, visando à solução de um problema ou o atendimento de determinada necessidade ou demanda da sociedade. O Programa apresenta o código definido no PPA 2010 – 2013.<br /><br />
+
+<span class='h1'>Ação</span> - É o detalhamento do programa - a ação pode ser um Projeto (ação destinada ao investimento) ou Atividade (voltada para a manutenção de um serviço já existente) ou ainda uma operação especial (referente aos serviços da dívida pública, precatórios e outros gastos que são de toda a administração).<br /><br />
+
+
+<h1>DEFINIÇÃO DAS FASES DE EXECUÇÃO ORÇAMENTÁRIA</h1>
+
+
+<spanInicial - Mostra o valor orçamentário que foi definido na LOA do ano vigente. Este valor pode ser alterado durante o exercício. O valor inicial é conhecido também como VALOR APROVADO<br /><br />
+
+<span class='h1'>Atualizado</span> - Nesta fase se pode enxergar se a ação ganhou ou perdeu recursos orçamentários. É nesta fase que se acompanha as alterações ocorridas em cada ação durante o exercício<br /><br />
+
+<span class='h1'>Empenhado</span> - Estágio que demonstra a intenção do poder público em adquirir ou realizar algum serviço. Nenhuma despesa pode ser realizada se não tiver prévio empenho. (De acordo com a Lei n°4320/64) - o empenho é a garantia de que um determinado recurso será usado somente para determinada ação. Nenhuma despesa pública poderá ser realizada sem prévio empenho.<br /><br />
+
+<span class='h1'>Liquidado</span> - Neste estágio da execução sabe-se que a prefeitura já atestou que o serviço foi realizado ou que a mercadoria já foi recebida. Aqui dizemos que o compromisso de realizar uma ação foi cumprido. (Conforme o art. 62/63 Lei 4.320/64) – É neste momento que o poder executivo assume a responsabilidade pelo serviço prestado ou pela parcela da obra realizada. A liquidação de empenho só acontece após um funcionário do poder executivo receber a nota fiscal e atestar que o serviço foi realizado de forma adequada.<br /><br />
+
+<span class='h1'>PAGAMENTO</span>, último estágio da execução orçamentária onde o recurso financeiro é depositado na conta do prestador de serviço e/ou obra para a prefeitura. (Artigos 64/65 Lei 4.320/64) – é a efetivação da liquidação. O pagamento é realizado após o setor contábil da prefeitura processar todas as notas fiscais e realizar seu cronograma de pagamento.<br /><br />
+
+<span class='h1'>Meta física LDO</span> - significa que a forma de medida de cada ação está inserida na Lei de Diretrizes Orçamentárias - LDO, é esta Lei que vincula as prioridades do PPA que serão expostas na LOA do ano seguinte.<br /><br />
+
+<h1>APRESENTAÇÃO DA REDE NOSSA SÃO PAULO</h1>
+
+A <a href="http://www.nossasaopaulo.org.br" target="_blank">Rede Nossa São Paulo</a> tem como missão mobilizar diversos segmentos da sociedade para, em parceria com instituições públicas e privadas, construir e se comprometer com uma agenda e um conjunto de metas, e articular ações visando a uma cidade de São Paulo justa e sustentável. Apartidária e inter-religiosa é apoiada por cerca de 700 organizações e milhares de cidadãos interessados em participar do processo de construção de uma São Paulo com melhor qualidade de vida. Para isso, seleciona e organiza os principais indicadores de qualidade de vida para a região de cada subprefeitura e distrito. Mantém um banco de dados sobre iniciativas exemplares de sustentabilidade urbana. E realiza ações e campanhas visando à revalorização do espaço público, à melhoria da autoestima e ao sentimento de pertencimento à cidade.<br /><br />
+A Rede Nossa São Paulo conta com a participação de Grupos de Trabalho temáticos. Os GTs são constituídos por representantes de entidades e cidadãos e cumprem uma agenda decidida coletivamente no Movimento. Estes grupos têm autonomia para planejar as ações sob a perspectiva de cada área temática.<br /><br />
+Em parceria com o Instituto Ethos e a Rede Social Brasileira por Cidades Justas e Democráticas, a Rede Nossa São Paulo é realizadora do Programa Cidades Sustentáveis (www.cidadessustentaveis.org.br) O Programa é apartidário e tem o objetivo de sensibilizar, mobilizar e oferecer ferramentas para que as cidades brasileiras se desenvolvam de forma econômica, social e ambientalmente sustentável. Para enfrentar esse grande desafio, envolve cidadãos, organizações sociais, empresas e governos. Para isso, oferece às cidades uma agenda completa de sustentabilidade urbana, um conjunto de indicadores associados a esta agenda, enriquecida por casos exemplares nacionais e internacionais como referências a serem perseguidas pelos gestores públicos municipais.<br /><br />
+
+</div>

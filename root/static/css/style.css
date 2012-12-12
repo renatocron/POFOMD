@@ -1,6 +1,6 @@
 
 a, a:visited{
-	color: #996600;
+	color: #990000;
 	text-decoration: none;
 }
 
@@ -24,10 +24,8 @@ font-weight: lighter;
 font-variant: normal;
 text-transform: uppercase;
 color: #666666;
-margin-top: 10px;
-text-align: center!important;
-letter-spacing: 0.3em;
-padding: 20px 20px;
+text-align: left!important;
+letter-spacing: 0.1em;
 }
 
 #beta {
@@ -83,22 +81,22 @@ padding: 20px 20px;
 }
 
 #legenda {
-width: 380px;
+width: 280px;
 float: left;
 font-family: "Lucida Grande", Tahoma;
 font-size: 8pt;
 color: #666666;
-padding:0px 10px;
+padding:10px;
 }
 
 #totais {
-width: 560px;
+width: 390px;
 float: left;
 text-align: right;
 font-family: "Lucida Grande", Tahoma;
 font-size: 8pt;
 color: #666666;
-padding:0px 10px;
+padding: 10px;
 }
 
 #prog_total{
@@ -113,6 +111,7 @@ text-align: center;
 
 
 #mainvis {
+	float: left;
 	position: relative;
 	overflow: hidden;
     cursor: pointer;
@@ -132,6 +131,29 @@ text-align: center;
 	font-weight: normal;
 	margin-bottom: 0.1em;
 }
+
+#mainvis-description {
+	margin-left: 10px;
+	float: left;
+	border: 1px solid #e0e0e0;
+	background-color: #fff;
+}
+
+#mainvis-description .content-fill{
+	padding: 10px;
+}
+
+#mainvis-description .content-fill .title{
+	font-size: 11pt;
+	font-weight:bolder;
+	color: #900;
+	margin-bottom: 5px;
+}
+
+#mainvis-description .content-fill .text{
+	color: #999;
+}
+
 #_tooltip {
 	background-color: #DDE7F0;
 	padding: 4px 6px;
@@ -148,7 +170,7 @@ border-collapse:collapse;
 #datalist td, #datalist th 
 {
 font-size:1.0em;
-border:1px solid #98bf21;
+border:1px solid #d3d3d3;
 padding:3px 7px 2px 7px;
 }
 #datalist th 
@@ -157,13 +179,13 @@ font-size:1.0em;
 text-align:center;
 padding-top:5px;
 padding-bottom:4px;
-background-color:#A7C942;
+background-color:#c94242;
 color:#fff;
 }
 #datalist tr.alt td 
 {
 color:#000;
-background-color:#EAF2D3;
+background-color:#efefef;
 }
 
 td.yearselect{
@@ -191,4 +213,76 @@ table.tablesorter .headerSortDown {
 	background-image: url(desc.gif);
 	background-repeat: no-repeat;
 	background-position: 2px 13px;
+}
+
+
+div.sobre h1{
+	font-size: 14pt;	
+}
+div.sobre span.h1{
+	font-weight: bolder;
+}
+
+div.sobre h2{
+	font-size: 12pt;	
+	color: #444;
+}
+
+div.parceiros{
+	margin-top: 15px;
+	margin-left: 560px;
+	clear: both;
+	
+}
+
+div.parceiros .label{
+	background: none;
+	text-transform: none;
+	padding: 0;
+	float: left;
+	margin: 15px 10px 0px 5px;
+	color: #444;
+}
+div.parceiros .logo{
+	float: left;
+	margin: 5px 10px;
+}
+
+div.footer-develop{
+	clear: both;	
+}
+
+
+div.footer-menu{
+	float: left;
+}
+
+div.cc{
+	position: absolute;	
+	width: 400px;
+	float: left;
+	text-align: right;
+	margin-top: -48px;
+	margin-left: 570px;
+}
+.page-header img.pofomd{
+	margin-left: 10px;	
+}
+
+table.credores thead th{
+	background-color:#f5f5f5;
+	background-repeat:repeat-x;
+	background-image:-khtml-gradient(linear, left top, left bottom, from(#ffffff), to(#f5f5f5));
+	background-image:-moz-linear-gradient(top, #ffffff, #f5f5f5);
+	background-image:-ms-linear-gradient(top, #ffffff, #f5f5f5);
+	background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f5f5f5));
+	background-image:-webkit-linear-gradient(top, #ffffff, #f5f5f5);
+	background-image:-o-linear-gradient(top, #ffffff, #f5f5f5);
+	background-image:linear-gradient(top, #ffffff, #f5f5f5);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f5f5f5', GradientType=0);
+}
+
+table.credores td.total{
+	text-align: right;
+	font-weight: bolder;	
 }

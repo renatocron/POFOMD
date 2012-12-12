@@ -15,7 +15,7 @@ function geturljson(url,year) {
   		var data = rdata.data;
 		if (rdata.children != ""){
 			showData(data,rdata,url,year);
-      $('.legenda').show();
+		      $('#legenda').show();
 			$('.total').html("Total: R$ " + rdata.total_tree);
 			//if (rdata.zones != undefined) {
       if (1) {
@@ -28,15 +28,15 @@ function geturljson(url,year) {
           }
         }
 
-        $('.voltarpagina').show();
+//        $('.voltarpagina').show();
       } else {
 				$('.intro').html("<p>Esta disposição é baseada na lei de diretrizes orçamentarias e os dados são do portal da transparência, no qual estão apenas os investimentos realizados pelo governo federal. </p>");
-        $('.voltarpagina').hide();
+//        $('.voltarpagina').hide();
 			}
 		}
 		
 		else{
-			document.location.href = "/year/" + rdata.current_model;
+			document.location.href = "/";
 		}
 	});
 
@@ -74,8 +74,8 @@ function showData(data,rdata,url,year) {
 	items.push('</tbody></table>');
     }
 
-	items.push("<p>Formato aberto dos dados listados nesta página em JSON:</p>");
-	items.push("<pre><a href='" + url + "' target='_blank'>http://www.paraondefoimeudinheiro.com.br" + url + "</a></pre>");
+//	items.push("<p>Formato aberto dos dados listados nesta página em JSON:</p>");
+//	items.push("<pre><a href='" + url + "' target='_blank'>http://www.paraondefoimeudinheiro.com.br" + url + "</a></pre>");
 	
 	$('.my-new-list').html(items.join(''));
 

@@ -72,29 +72,30 @@ _gaq.push(['_trackPageview']);
 <div class="topbar" data-dropdown="dropdown">
 	<div class="topbar-inner">
 		<div class="container-fluid">
-			<a class="brand" href="http://opendatabr.org/" target="_blank">opendata-br</a>
 			<ul class="nav">
-				<li><a href="/">Home</a></li>
-				<li><a href="/faq">FAQ</a></li>
+				<li><a href="/sobre">Sobre</a></li>
 
 				<li style="margin-left:100px" class="dropdown">
 					<a href="#" class="dropdown-toggle">Federal</a>
 					<ul class="dropdown-menu">
-						<li><a href="#">2010</a></li>
-						<li><a href="#">2009</a></li>
-						<li><a href="#">2008</a></li>
-						<li><a href="#">2007</a></li>
-						<li><a href="#">2006</a></li>
-						<li><a href="#">2005</a></li>
+						<li><a href="/dataset/federal-direto-2012">Gastos direto - 2012</a></li>
+						<li><a href="/dataset/federal-direto-2011">Gastos direto - 2011</a></li>
+						<li><a href="/dataset/federal-direto-2010">Gastos direto - 2010</a></li>
+
 					</ul>
 				</li>
 
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle">Estadual</a>
                     <ul class="dropdown-menu">
-                        <li><a href="/sp/2010">São Paulo 2010</a></li>
-                        <li><a href="/sp/2011">São Paulo 2011</a></li>
-                        <li><a href="/sp/2012">São Paulo 2012</a></li>
+                        <li><a href="/dataset/estado-sao-paulo-2012">São Paulo - 2012</a></li>
+					</ul>
+				</li>
+
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle">Municipal</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/dataset/municipio-sao-paulo-2011">SP - São Paulo - 2011</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -109,12 +110,12 @@ _gaq.push(['_trackPageview']);
 
 			<div class="row">
 				<div class="span14">
-					<img src="[% c.uri_for('/static/images/logo-pofomd.png') %]" border="0" />
+					<img src="[% c.uri_for('/static/images/logo-rnsp.png') %]" border="0" class='rnsp' /> <img src="[% c.uri_for('/static/images/logo-pofomd.png') %]" border="0" class="pofomd" />
 				</div>
 
 				<div class="span2">
 					<a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.paraondefoiomeudinheiro.com.br/year/2010" data-count="horizontal">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-					<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.paraondefoimeudinheiro.com.br&amp;send=false&amp;layout=button_count&amp;width=85&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font=tahoma&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:85px; height:21px;" allowTransparency="true"></iframe>
+					<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.paraondefoimeudinheiro.org.br&amp;send=false&amp;layout=button_count&amp;width=85&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font=tahoma&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:85px; height:21px;" allowTransparency="true"></iframe>
 				</div>
 			</div>
 		</div>
@@ -122,8 +123,21 @@ _gaq.push(['_trackPageview']);
 			<div class="span16">
 				[% content %]
 			</div>
+
 		</div>
+		
 	</div>
+
+	<div class="parceiros">
+		
+		<div class="label">Parceiros:</div>
+	
+		<div class="logo"><a href="http://www.w3c.br/" target="_blank"><img src="[% c.uri_for('/static/images/logo-w3c.png') %]" /></a></div>
+		<div class="logo"><a href="http://www.nic.br/" target="_blank"><img src="[% c.uri_for('/static/images/logo-nicbr.png') %]" /></a></div>
+		<div class="logo"><a href="http://www.cgi.br/" target="_blank"><img src="[% c.uri_for('/static/images/logo-cgibr.png') %]" /></a></div>
+		<div class="logo"><a href="http://www.okfn.org/" target="_blank"><img src="[% c.uri_for('/static/images/logo-okfn.png') %]" /></a></div>
+	</div>
+	
 </div>
 
 <br />
@@ -131,56 +145,31 @@ _gaq.push(['_trackPageview']);
 	<div class="container margem"> [%# aqui diz que vai ter o conteudo centralizado %]
 		<div class="row"> [%# aqui faz quebrar por "linhas" (adiciona -20px no left) %]
 
-			<div class="span3"> [%# e aqui faz uma coluna de 4x, cabem 16x por "row" %]
-				<p>Desenvolvido por</p>
-				<ul>
-					<li><a href="http://sao-paulo.pm.org" target="_blank"> São Paulo Perl Mongers</a></li>
-					<li><a href="http://www.opendatabr.org/" target="_blank">opendata-br</a></li>
-				</ul>
-			</div>
-
-
-			<div class="span2">
-				<p>Federal</p>
-				<ul>
-					<li><a href="#">2010</a> - <a href="#">2006</a> </li>
-					<li><a href="#">2009</a> - <a href="#">2007</a></li>
-					<li><a href="#">2008</a> - <a href="#">2005</a></li>
-				</ul>
-			</div>
-			<div class="span3">
-				<p>Estadual</p>
-                <ul>
-                    <li><a href="/sp/2010">São Paulo 2010</a></li>
-                    <li><a href="/sp/2011">São Paulo 2011</a></li>
-                    <li><a href="/sp/2012">São Paulo 2012</a></li>
-				</ul>
-			</div>
-
-			<div class="span4">
+			<div class="menu-footer">
 				<p>Para onde foi o meu dinheiro ?</p>
 				<ul>
-					<li><a href="/faq">FAQ</a></li>
-					<li><a href="/todo">TODO</a></li>
+					<li><a href="/sobre">Sobre</a></li>
 					<li><a href="/contato">Contato</a></li>
 				</ul>
 			</div>
-
-			<div class="span4">
-			<p>
-				<a href="http://www.opendefinition.org/okd/">
-					<img src="http://assets.okfn.org/images/ok_buttons/od_80x15_blue.png" alt="OpenData">
-				</a>
-				</p><p>
-					<a rel="license" href="http://creativecommons.org/licenses/by/3.0/br/"><img alt="Licença Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/br/80x15.png"></a><br>este trabalho está sobre a licença <a rel="license" href="http://creativecommons.org/licenses/by/3.0/br/">Creative Commons Atribuição 3.0</a>
+			
+			<div class="cc">
+				<p>
+					<a href="http://www.opendefinition.org/okd/">
+						<img src="http://assets.okfn.org/images/ok_buttons/od_80x15_blue.png" alt="OpenData">
+					</a>
+				</p>
+				<p>
+					<a rel="license" href="http://creativecommons.org/licenses/by/3.0/br/"><img alt="Licença Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/br/80x15.png"></a><br>Este trabalho está sobre a licença <a rel="license" href="http://creativecommons.org/licenses/by/3.0/br/">Creative Commons Atribuição 3.0</a>
 				</p>
 			</div>
-
-
+			<div class='footer-develop'>
+				Desenvolvido por <a href="http://sao-paulo.pm.org" target="_blank"> São Paulo Perl Mongers</a>
+			</div>
 		</div>
 	</div>
-
 </div>
+
 </footer>
 
 </body>
