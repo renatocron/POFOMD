@@ -11,10 +11,11 @@ sub list : Chained('/base') : PathPart('datasets') : Args(0) {
 
     my $gasto     = $c->model('DB::Gasto');
     my $rs        = $c->model('DB::Dataset');
-    my $total_all = 0;
-
     my @dts;
 
+    # TODO : Adicionar tipo de base no dataset.
+
+    my $total_all = 0;
     foreach my $item ( $rs->all ) {
         my $search = $gasto->search(
             { dataset_id => $item->id },
@@ -25,20 +26,24 @@ sub list : Chained('/base') : PathPart('datasets') : Args(0) {
             }
         );
 
+        my $obj = $search->first or next;
+
         push(
             @dts,
             {
-                id      => $item->id,
-                display => join(' ', $item->nome, $item->periodo->ano ),
-                link    => join( '/', '', 'dataset', $item->uri ),
-                total   => $search->first->valor,
+                dataset_id => $item->id,
+                periodo => $item->periodo->ano,
+                valor => $obj->valor,
+                total => formata_valor($obj->valor),
+                items => $gasto->search({ dataset_id => $item->id })->count
             }
         );
-        $total_all += $search->first->valor;
+        $total_all += $obj->valor;
     }
 
     $c->stash->{data} = \@dts;
-    $c->forward('handle_TREE');
+    $c->stash->{total_all} = $total_all;
+    $c->forward('View::JSON');
 }
 
 sub base : Chained('/base') : PathPart('dataset') : CaptureArgs(1) {
