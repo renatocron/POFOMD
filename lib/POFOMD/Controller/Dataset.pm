@@ -13,8 +13,6 @@ sub list : Chained('/base') : PathPart('datasets') : Args(0) {
     my $rs        = $c->model('DB::Dataset');
     my @dts;
 
-    # TODO : Adicionar tipo de base no dataset.
-
     my $total_all = 0;
     foreach my $item ( $rs->all ) {
         my $search = $gasto->search(
@@ -28,6 +26,10 @@ sub list : Chained('/base') : PathPart('datasets') : Args(0) {
 
         my $obj = $search->first or next;
 
+        # TODO : Adicionar tipo de base no dataset.
+        my $type = $item->uri;
+        $type =~ s/\-.*//g;
+
         push(
             @dts,
             {
@@ -35,7 +37,8 @@ sub list : Chained('/base') : PathPart('datasets') : Args(0) {
                 periodo => $item->periodo->ano,
                 valor => $obj->valor,
                 total => formata_valor($obj->valor),
-                items => $gasto->search({ dataset_id => $item->id })->count
+                items => $gasto->search({ dataset_id => $item->id })->count,
+                type => $type
             }
         );
         $total_all += $obj->valor;
