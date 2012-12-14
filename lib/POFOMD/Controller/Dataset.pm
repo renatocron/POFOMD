@@ -58,8 +58,9 @@ sub year : Chained('base') PathPart('') CaptureArgs(0) {
       join( '/', '', 'dataset', $c->stash->{dataset}->uri, 'data' );
 }
 
-sub root : Chained('year') PathPart('') Args(0) {
+sub root_list : Chained('/base') PathPart('datasets/overview') Args(0) {
     my ( $self, $c ) = @_;
+    $c->stash->{template} = 'datasets.tt';
 }
 
 sub root_funcoes : Chained('year') PathPart('') Args(1) {
