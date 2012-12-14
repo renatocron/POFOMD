@@ -1,0 +1,16 @@
+
+<h1>Busca</h1>
+
+[% INCLUDE pager.tt pager=credores.pager %]
+
+[% FOREACH item IN credores.all %]
+
+Nome: <a href="/credor/[% item.uri %]">[% item.nome %]</a><br/>
+Total de valores recebido*: [% item.total %]<br/>
+<hr>
+
+[% END %]
+
+
+* Este é o total do valor recebido nas bases de dados do site onde há informações sobre quem é o credor. Não necessariamente é todo o montante que este credor recebe.
+

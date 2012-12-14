@@ -33,6 +33,7 @@ requires 'Redis';
 requires 'Text::Unidecode';
 requires 'Text::CSV_XS';
 requires 'Text2URI';
+requires 'DBIx::Class::ResultClass::HashRefInflator';
 
 test_requires 'Test::More' => '0.88';
 catalyst;
