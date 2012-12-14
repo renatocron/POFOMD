@@ -39,7 +39,7 @@ sub list : Chained('/base') : PathPart('datasets') : Args(0) {
                 total => formata_valor($obj->valor),
                 items => $gasto->search({ dataset_id => $item->id })->count,
                 type => $type,
-                titulo => $obj->nome
+                titulo => $item->nome
             }
         );
         $total_all += $obj->valor;
