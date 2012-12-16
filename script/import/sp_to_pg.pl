@@ -4,7 +4,8 @@ use strict;
 use warnings;
 use POFOMD::Schema;
 
-#use Text::Iconv;
+use Text::Unaccent;
+
 use Text::Unidecode;
 use Text::CSV_XS;
 use Text2URI;
@@ -90,11 +91,15 @@ $csv->bind_columns(
 open my $fh, $ARGV[1] or die 'error';
 
 my $line = 0;
+my $cache_inserting = {};
+&load_from_database($_) for qw /Funcao Subfuncao Programa Acao Beneficiario Despesa Gestora Recurso/;
+
+$rs->search({dataset_id => $dataset->id})->delete;
 
 while ( my $row = $csv->getline($fh) ) {
     $line++;
     next if $CODIGO_FUNCAO eq 'CODIGO FUNCAO' or !$VALOR_LIQUIDADO;
-    warn $line;
+    print "$line\n";
     $VALOR_EMPENHADO               =~ s/\,/\./g;
     $VALOR_LIQUIDADO               =~ s/\,/\./g;
     $VALOR_PAGO_DE_ANOS_ANTERIORES =~ s/\,/\./g;
@@ -104,29 +109,29 @@ while ( my $row = $csv->getline($fh) ) {
         {
             dataset_id => $dataset->id,
 
-            funcao => $schema->resultset('Funcao')->find_or_create(
+            &cache_or_create(funcao => 'Funcao',
                 { codigo => $CODIGO_FUNCAO, nome => $NOME_FUNCAO }
             ),
 
-            subfuncao => $schema->resultset('Subfuncao')->find_or_create(
+            &cache_or_create(subfuncao => 'Subfuncao',
                 { codigo => $CODIGO_SUBFUNCAO, nome => $NOME_SUBFUNCAO }
             ),
 
-            programa => $schema->resultset('Programa')->find_or_create(
+            &cache_or_create(programa => 'Programa',
                 {
                     codigo => $CODIGO_PROGRAMA,
                     nome   => &remover_acentos($NOME_PROGRAMA)
                 }
             ),
 
-            acao => $schema->resultset('Acao')->find_or_create(
+            &cache_or_create(acao => 'Acao',
                 {
                     codigo => $CODIGO_ACAO,
                     nome   => &remover_acentos($NOME_ACAO)
                 }
             ),
 
-            beneficiario => $schema->resultset('Beneficiario')->find_or_create(
+            &cache_or_create(beneficiario => 'Beneficiario',
                 {
                     codigo    => $CODIGO_CREDOR,
                     nome      => &remover_acentos($NOME_CREDOR),
@@ -135,21 +140,21 @@ while ( my $row = $csv->getline($fh) ) {
                 }
             ),
 
-            despesa => $schema->resultset('Despesa')->find_or_create(
+            &cache_or_create(despesa => 'Despesa',
                 {
                     codigo => $CODIGO_GRUPO_DE_DESPESA,
                     nome   => &remover_acentos($NOME_GRUPO_DE_DESPESA)
                 }
             ),
 
-            gestora => $schema->resultset('Gestora')->find_or_create(
+            &cache_or_create(gestora => 'Gestora',
                 {
                     codigo => $CODIGO_UNIDADE_GESTORA,
                     nome   => $NOME_UNIDADE_GESTORA
                 }
             ),
 
-            pagamento => $schema->resultset('Pagamento')->find_or_create(
+            pagamento => $schema->resultset('Pagamento')->create(
                 {
                     numero_processo => &remover_acentos($NUMERO_PROCESSO),
                     numero_nota_empenho =>
@@ -162,7 +167,7 @@ while ( my $row = $csv->getline($fh) ) {
                 }
             ),
 
-            recurso => $schema->resultset('Recurso')->find_or_create(
+            &cache_or_create(recurso => 'Recurso',
                 {
                     codigo => &remover_acentos($CODIGO_FONTE_DE_RECURSOS),
                     nome   => &remover_acentos($NOME_FONTE_DE_RECURSOS)
@@ -172,74 +177,50 @@ while ( my $row = $csv->getline($fh) ) {
         }
     );
 
-    print "funcao, $NOME_FUNCAO\n";
-    print "subfuncao, $NOME_SUBFUNCAO\n";
-    print "programa, $NOME_PROGRAMA\n";
-    print "acao, $NOME_ACAO\n";
-    print "credor, $NOME_CREDOR\n\n";
+    #print "funcao, $NOME_FUNCAO\n";
+    #print "subfuncao, $NOME_SUBFUNCAO\n";
+    #print "programa, $NOME_PROGRAMA\n";
+    #print "acao, $NOME_ACAO\n";
+    #print "credor, $NOME_CREDOR\n\n";
 
 }
 
 print "done\n";
 close $fh;
 
+
+
+sub load_from_database {
+    my ($campo) = @_;
+
+    my $campo_lc = lc $campo;
+    my $rs = $schema->resultset($campo);
+    my $r;
+    $cache_inserting->{$campo_lc}{$r->codigo} = $r->id while ($r = $rs->next);
+}
+
+sub cache_or_create {
+    my ($campo, $set, $info) = @_;
+
+    my $codigo = $info->{codigo};
+    my $id;
+
+    if (exists $cache_inserting->{$campo}{$codigo}){
+
+        $id = $cache_inserting->{$campo}{$codigo};
+
+    }else{
+        my $obj = $schema->resultset($set)->create($info);
+
+        $cache_inserting->{$campo}{$codigo} = $id = $obj->id;
+    };
+
+    return ($campo . '_id' => $id);
+}
+
 sub remover_acentos {
     my $var = shift;
-    $var = unidecode($var);
-    map {
-        s/Á/A/g;
-        s/À/A/g;
-        s/Ã/A/g;
-        s/Ä/A/g;
-        s/Â/A/g;
-        s/á/a/g;
-        s/à/a/g;
-        s/ã/a/g;
-        s/ä/a/g;
-        s/â/a/g;
-
-        s/É/E/g;
-        s/È/E/g;
-        s/Ë/E/g;
-        s/Ê/E/g;
-        s/é/e/g;
-        s/è/e/g;
-        s/ë/e/g;
-        s/ê/e/g;
-
-        s/Í/I/g;
-        s/Ì/I/g;
-        s/Ï/I/g;
-        s/Î/I/g;
-        s/í/i/g;
-        s/ì/i/g;
-        s/ï/i/g;
-        s/î/i/g;
-
-        s/Ó/O/g;
-        s/Ò/O/g;
-        s/Õ/O/g;
-        s/Ö/O/g;
-        s/Ô/O/g;
-        s/ó/o/g;
-        s/ò/o/g;
-        s/õ/o/g;
-        s/ö/o/g;
-        s/ô/o/g;
-
-        s/Ú/U/g;
-        s/Ù/U/g;
-        s/Ü/U/g;
-        s/Û/U/g;
-        s/ú/u/g;
-        s/ù/u/g;
-        s/ü/u/g;
-        s/û/u/g;
-
-        s/ç/c/;
-        s/Ç/C/;
-    } $var;
-
+    $var = unac_string('UTF-8', $var);
     return $var;
 }
 
